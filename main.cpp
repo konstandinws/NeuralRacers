@@ -54,10 +54,6 @@ struct Car{
             velocity.x -= 1 * sin(rad);
             velocity.y += 1 * cos(rad); 
         }
-        if (IsKeyDown(KEY_SPACE))
-        {
-            std::cout << 10 * cos(rad) << " - " << 10 * sin(rad) << "\n";
-        }
 
         velocity.x *= 1 - friction;
         velocity.y *= 1 - friction;
@@ -86,17 +82,37 @@ struct trackEditor {
     std::vector<Point> points{};
     std::vector<Line> lines{};
     std::queue<Point> q;
+    int closeRadius = 20;
 
     void handleClick(){
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
             Vector2 mousePos = GetMousePosition();
             Point p = {mousePos.x, mousePos.y};
+
+            if(points.size() > 3){ 
+                Point first = points.front();
+                if (pow(first.x - mousePos.x, 2) <= pow(closeRadius, 2) &&
+                    pow(first.y - mousePos.y, 2) <= pow(closeRadius, 2)){
+                        p.x = first.x;
+                        p.y = first.y;
+                        std::cout << "Circuit done" << "\n";
+                }
+            }
             points.push_back(p);
             q.push(p);
             if(q.size() > 1){
                 lines.push_back(Line{q.front(), q.back()});
                 q.pop();
             }
+
+            // Point first = points.front();
+            // Point last = points.back();
+
+            // if (pow(first.x - last.x, 2) <= pow(closeRadius, 2) &&
+            //     pow(first.y - last.y, 2) <= pow(closeRadius, 2)){
+            //         last.x = first.x;
+            //         last.y = first.y;
+            // }
         }
 
         if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)){
@@ -111,6 +127,12 @@ struct trackEditor {
                 std::cout << "(" << l.a.x << ", " << l.a.y << ")" << ", " << "(" << l.b.x << ", " << l.b.y << ") ";
             }
             std::cout << "\n";
+        }
+
+        if (IsKeyPressed(KEY_SPACE)){
+            points.clear();
+            lines.clear();
+            q.pop();
         }
     }
 
