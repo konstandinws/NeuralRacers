@@ -80,19 +80,56 @@ struct Line {
     Point b;
 };
 
+
+struct Buffer {
+    std::vector<Point> buffer;
+
+    Line giveLine(){
+        return Line{buffer[0], buffer[1]};
+    }
+
+    void add (Point p){
+        buffer.push_back(p);
+    }
+
+    int size(){
+        return buffer.size();
+    }
+
+    void clear(){
+        buffer.clear();
+    }
+};
+
 struct trackEditor {
     std::vector<Point> points{};
     std::vector<Line> lines{};
+    Buffer buffer;
 
     void handleClick(){
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
             Vector2 mousePos = GetMousePosition();
-            points.push_back(Point{mousePos.x, mousePos.y});
+            Point p = {mousePos.x, mousePos.y};
+            points.push_back(p);
+            if(buffer.size() < 2) {
+                buffer.add(p);
+            }
+            else {
+                lines.push_back(buffer.giveLine());
+                buffer.clear();
+            }
+
         }
         if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)){
             std::cout << "Points : ";
             for(Point p : points) {
                 std::cout << "(" << p.x << ", " << p.y << ") ";
+            }
+            std::cout << "\n";
+
+            std::cout << "Lines : ";
+            for(Line l : lines) {
+                std::cout << "(" << l.a.x << ", " << l.a.y << ")" << ", " << "(" << l.b.x << ", " << l.b.y << ") ";
             }
             std::cout << "\n";
         }
@@ -101,6 +138,10 @@ struct trackEditor {
     void draw(){
         for(Point p : points) {
             DrawCircle(p.x, p.y, 5, YELLOW);    
+        }
+
+        for(Line l : lines){
+            DrawLine(l.a.x, l.a.y, l.b.x, l.b.y, GREEN);
         }
     }
 };
