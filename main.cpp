@@ -77,6 +77,17 @@ struct Line {
     Point b;
 };
 
+struct Track {
+    std::vector<Point> points;
+    std::vector<Line> lines;
+    bool isVisible = false;
+
+    void draw(){
+        for(Line line : lines) {
+            DrawLine(line.a.x, line.a.y, line.b.x, line.b.y, BLUE);
+        }
+    }
+};
 
 struct trackEditor {
     std::vector<Point> points{};
@@ -104,15 +115,6 @@ struct trackEditor {
                 lines.push_back(Line{q.front(), q.back()});
                 q.pop();
             }
-
-            // Point first = points.front();
-            // Point last = points.back();
-
-            // if (pow(first.x - last.x, 2) <= pow(closeRadius, 2) &&
-            //     pow(first.y - last.y, 2) <= pow(closeRadius, 2)){
-            //         last.x = first.x;
-            //         last.y = first.y;
-            // }
         }
 
         if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)){
@@ -136,6 +138,10 @@ struct trackEditor {
         }
     }
 
+    Track getTrack() {
+        return Track{points, lines};
+    }
+
     void draw(){
         for(Point p : points) {
             DrawCircle(p.x, p.y, 5, YELLOW);    
@@ -153,6 +159,7 @@ int main() {
 
     InitWindow(W, H, "trackmania 2D");
     SetTargetFPS(60);
+    Track track;
 
     while(!WindowShouldClose()) {
         BeginDrawing();
@@ -161,9 +168,21 @@ int main() {
         t.handleClick();
         t.draw();
         DrawCircle(W2, H2, 5, WHITE);
+
+        if(IsKeyPressed(KEY_E)) {
+            track = t.getTrack();
+        }
+
+        if(IsKeyPressed(KEY_V)) {
+            track.isVisible = true;
+        }
+
+        if(track.isVisible) {
+            track.draw();
+        }
+
         ClearBackground(BLACK);
         EndDrawing();
-
     }
 
     CloseWindow();
