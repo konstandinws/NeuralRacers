@@ -3,6 +3,7 @@
 #include "raylib.h"
 #include <random>
 #include <queue>
+#include <unordered_map>
 
 const int W = 1200;
 const int H = 800;
@@ -152,6 +153,13 @@ struct trackEditor {
         }
     }
 };
+
+const int gridSize = 200; 
+std::unordered_map<Vector2, Line> grid;
+
+void gridCollision() {
+    
+}
 
 trackEditor t = trackEditor();
 
