@@ -160,6 +160,9 @@ trackEditor t = trackEditor();
 Track track;
 
 const int gridSize = 200; 
+
+// il est problable que la unordered_map ne sache pas hasher un Vector2 car structure perso
+// soit implementer has_function de unordered_map ou d'en faire une perso pour acceder a tous les elements
 std::unordered_map<Vector2, std::set<Line>> grid;
 
 
