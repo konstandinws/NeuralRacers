@@ -4,6 +4,7 @@
 #include <random>
 #include <queue>
 #include <unordered_map>
+#include <set>
 
 const int W = 1200;
 const int H = 800;
@@ -154,20 +155,24 @@ struct trackEditor {
     }
 };
 
-const int gridSize = 200; 
-std::unordered_map<Vector2, Line> grid;
-
-void gridCollision() {
-    
-}
 
 trackEditor t = trackEditor();
+Track track;
+
+const int gridSize = 200; 
+std::unordered_map<Vector2, std::set<Line>> grid;
+
+
+// parcourir tous les murs et calculer dans quel zone ils se situent
+void gridCollision() {
+
+}
 
 int main() {
 
     InitWindow(W, H, "trackmania 2D");
     SetTargetFPS(60);
-    Track track;
+    
 
     while(!WindowShouldClose()) {
         BeginDrawing();
