@@ -22,9 +22,21 @@ void drawGrid() {
     }
 }
 
+struct Point {
+    float x;
+    float y;
+};
+
+struct Line {
+    Point a;
+    Point b;
+};
+
 struct Car{
     int width = 20;
     int height = 50; 
+    int w2 = width/2;
+    int h2 = height/2; 
     float angle = 0;
     Vector2 pos{W2, H2};
     float rad = angle * DEG2RAD;
@@ -33,9 +45,54 @@ struct Car{
 
     Rectangle carRect = { pos.x, pos.y, width, height };
     Vector2 origin = { width / 2, height / 2 };
+    Point a = {pos.x - w2, pos.y - h2};
+    Point b = {pos.x + w2, pos.y - h2};
+    Point c = {pos.x + w2, pos.y + h2};
+    Point d = {pos.x - w2, pos.y + h2};
+
+    Line haut = {a, b};
+    Line gauche = {b, c};
+    Line bas = {c, d};
+    Line droite = {d, a};
+
+    Line car[4] = {haut, gauche, bas, droite};
+
+    void updateCollisionLines() {
+        float cos_a = cos(rad);
+        float sin_a = sin(rad);
+      
+        a = {pos.x - w2 * cos_a - (-h2) * sin_a, pos.y - w2 * sin_a + (-h2) * cos_a};
+        b = {pos.x + w2 * cos_a - (-h2) * sin_a, pos.y + w2 * sin_a + (-h2) * cos_a};
+        c = {pos.x + w2 * cos_a - h2 * sin_a, pos.y + w2 * sin_a + h2 * cos_a};
+        d = {pos.x - w2 * cos_a - h2 * sin_a, pos.y - w2 * sin_a + h2 * cos_a};
+        
+        haut = {a, b};
+        gauche = {b, c};
+        bas = {c, d};
+        droite = {d, a};
+        
+        car[0] = haut;
+        car[1] = gauche;
+        car[2] = bas;
+        car[3] = droite;
+    }
 
     void draw(){
         DrawRectanglePro(carRect, origin, angle, RED);
+    }
+
+    void drawColision() {
+        for(Line& l : car){
+            DrawLine(l.a.x, l.a.y, l.b.x, l.b.y, GREEN);
+        }
+    }
+
+    void update() {
+        carRect.x += velocity.x;
+        carRect.y += velocity.y;
+        pos.x = carRect.x;
+        pos.y = carRect.y;
+        updateCollisionLines();
     }
 
     void handleInput(){
@@ -60,24 +117,12 @@ struct Car{
         velocity.x *= 1 - friction;
         velocity.y *= 1 - friction;
 
-        carRect.x += velocity.x;
-        carRect.y += velocity.y;
-
+        update();
     }
 };
 
 
 Car car = Car();
-
-struct Point {
-    float x;
-    float y;
-};
-
-struct Line {
-    Point a;
-    Point b;
-};
 
 struct Track {
     std::vector<Point> points;
@@ -163,13 +208,15 @@ const int gridSize = 200;
 
 // il est problable que la unordered_map ne sache pas hasher un Vector2 car structure perso
 // soit implementer has_function de unordered_map ou d'en faire une perso pour acceder a tous les elements
-std::unordered_map<Vector2, std::set<Line>> grid;
+// std::unordered_map<Vector2, std::set<Line>> grid;
 
 
 // parcourir tous les murs et calculer dans quel zone ils se situent
-void gridCollision() {
-
-}
+// void Collision() {
+//     for(Line l : track.lines){
+//         if (BoundingBox)
+//     }
+// }
 
 int main() {
 
@@ -180,6 +227,7 @@ int main() {
     while(!WindowShouldClose()) {
         BeginDrawing();
         car.draw();
+        car.drawColision();
         car.handleInput();
         t.handleClick();
         t.draw();
