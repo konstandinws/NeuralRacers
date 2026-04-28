@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <set>
 #include "car.hpp"
+#include "track.hpp"
 
 const int W = 1200;
 const int H = 800;
@@ -24,18 +25,6 @@ void drawGrid() {
 }
 
 Car car = Car(W2, H2);
-
-struct Track {
-    std::vector<Point> points;
-    std::vector<Line> lines;
-    bool isVisible = false;
-
-    void draw(){
-        for(Line line : lines) {
-            DrawLine(line.a.x, line.a.y, line.b.x, line.b.y, BLUE);
-        }
-    }
-};
 
 struct trackEditor {
     std::vector<Point> points{};

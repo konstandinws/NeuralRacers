@@ -1,8 +1,8 @@
 #pragma once
 
 #include "raylib.h"
-#include "Point.hpp"
-#include "Line.hpp"
+#include "point.hpp"
+#include "line.hpp"
 
 struct Car {
     int width;
