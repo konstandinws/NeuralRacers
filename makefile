@@ -6,7 +6,7 @@
 TARGET = game
 
 # Fichiers sources
-SOURCES = main.cpp
+SOURCES = $(wildcard *.cpp)
 
 # Répertoire d'installation de raylib
 RAYLIB_PATH = C:\Users\Konstantinos\Desktop\raylib-5.5_win64_mingw-w64

@@ -5,6 +5,7 @@
 #include <queue>
 #include <unordered_map>
 #include <set>
+#include "car.hpp"
 
 const int W = 1200;
 const int H = 800;
@@ -22,107 +23,7 @@ void drawGrid() {
     }
 }
 
-struct Point {
-    float x;
-    float y;
-};
-
-struct Line {
-    Point a;
-    Point b;
-};
-
-struct Car{
-    int width = 20;
-    int height = 50; 
-    int w2 = width/2;
-    int h2 = height/2; 
-    float angle = 0;
-    Vector2 pos{W2, H2};
-    float rad = angle * DEG2RAD;
-    Vector2 velocity = {0.0f, 0.0f};
-    float friction = 0.1f;
-
-    Rectangle carRect = { pos.x, pos.y, width, height };
-    Vector2 origin = { width / 2, height / 2 };
-    Point a = {pos.x - w2, pos.y - h2};
-    Point b = {pos.x + w2, pos.y - h2};
-    Point c = {pos.x + w2, pos.y + h2};
-    Point d = {pos.x - w2, pos.y + h2};
-
-    Line haut = {a, b};
-    Line gauche = {b, c};
-    Line bas = {c, d};
-    Line droite = {d, a};
-
-    Line car[4] = {haut, gauche, bas, droite};
-
-    void updateCollisionLines() {
-        float cos_a = cos(rad);
-        float sin_a = sin(rad);
-      
-        a = {pos.x - w2 * cos_a - (-h2) * sin_a, pos.y - w2 * sin_a + (-h2) * cos_a};
-        b = {pos.x + w2 * cos_a - (-h2) * sin_a, pos.y + w2 * sin_a + (-h2) * cos_a};
-        c = {pos.x + w2 * cos_a - h2 * sin_a, pos.y + w2 * sin_a + h2 * cos_a};
-        d = {pos.x - w2 * cos_a - h2 * sin_a, pos.y - w2 * sin_a + h2 * cos_a};
-        
-        haut = {a, b};
-        gauche = {b, c};
-        bas = {c, d};
-        droite = {d, a};
-        
-        car[0] = haut;
-        car[1] = gauche;
-        car[2] = bas;
-        car[3] = droite;
-    }
-
-    void draw(){
-        DrawRectanglePro(carRect, origin, angle, RED);
-    }
-
-    void drawColision() {
-        for(Line& l : car){
-            DrawLine(l.a.x, l.a.y, l.b.x, l.b.y, GREEN);
-        }
-    }
-
-    void update() {
-        carRect.x += velocity.x;
-        carRect.y += velocity.y;
-        pos.x = carRect.x;
-        pos.y = carRect.y;
-        updateCollisionLines();
-    }
-
-    void handleInput(){
-    
-        if(IsKeyDown(KEY_LEFT)){
-            angle -= 4;
-            rad = angle * DEG2RAD;
-        }
-        if(IsKeyDown(KEY_RIGHT)){
-            angle += 4;
-            rad = angle * DEG2RAD;
-        }
-        if(IsKeyDown(KEY_UP)){
-            velocity.x += 1 * sin(rad);
-            velocity.y -= 1 * cos(rad); 
-        }
-        if(IsKeyDown(KEY_DOWN)){
-            velocity.x -= 1 * sin(rad);
-            velocity.y += 1 * cos(rad); 
-        }
-
-        velocity.x *= 1 - friction;
-        velocity.y *= 1 - friction;
-
-        update();
-    }
-};
-
-
-Car car = Car();
+Car car = Car(W2, H2);
 
 struct Track {
     std::vector<Point> points;
@@ -214,7 +115,7 @@ const int gridSize = 200;
 void collision() {
     Vector2 collisionPoint = {0, 0};
     for(Line l : track.lines){
-        for(Line carLine : car.car){
+        for(Line carLine : car.carLines){
             if(CheckCollisionLines(Vector2{carLine.a.x, carLine.a.y}, Vector2{carLine.b.x, carLine.b.y}, Vector2{l.a.x, l.a.y}, Vector2{l.b.x, l.b.y}, &collisionPoint)){
                 car.carRect.x = W2;
                 car.carRect.y = H2;
@@ -233,7 +134,7 @@ int main() {
     while(!WindowShouldClose()) {
         BeginDrawing();
         car.draw();
-        car.drawColision();
+        car.drawCollision();
         car.handleInput();
         t.handleClick();
         t.draw();
