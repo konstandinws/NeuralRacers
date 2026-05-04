@@ -57,10 +57,18 @@ int main() {
     // mettre cela dans un renderer pour que ce soit plus propre
     InitWindow(W, H, "trackmania 2D");
     SetTargetFPS(60);
+
+    // camera, j'utilise la camera de raylib et pas from scratch car elle utilise le gpu
+    Camera2D camera = {0};
     
 
     while(!WindowShouldClose()) {
+        camera.target = {car.pos.x, car.pos.y};
+        camera.offset = {W2, H2};
+        camera.rotation = 0.0f;
+        camera.zoom = 1.0f;
         BeginDrawing();
+        BeginMode2D(camera);
         Renderer::drawCar(&car);
         car.drawCollision();
         car.handleInput();
@@ -92,6 +100,7 @@ int main() {
         }
 
         ClearBackground(BLACK);
+        EndMode2D();
         EndDrawing();
     }
 
