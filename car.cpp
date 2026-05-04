@@ -52,10 +52,6 @@ void Car::updateCollisionLines() {
     carLines[3] = Car::droite;
 }
 
-void Car::draw(){
-        DrawRectanglePro(carRect, origin, angle, RED);
-}
-
 void Car::drawCollision()
 {
     for(Line& l : carLines){

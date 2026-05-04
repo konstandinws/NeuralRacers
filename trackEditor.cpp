@@ -51,24 +51,7 @@ void TrackEditor::handleClick()
         }
         std::cout << "\n";
     }
-
-    if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
-    {
-        std::cout << "Points : ";
-        for (Point p : points)
-        {
-            std::cout << "(" << p.x << ", " << p.y << ") ";
-        }
-        std::cout << "\n";
-
-        std::cout << "Lines : ";
-        for (Line l : lines)
-        {
-            std::cout << "(" << l.a.x << ", " << l.a.y << ")" << ", " << "(" << l.b.x << ", " << l.b.y << ") ";
-        }
-        std::cout << "\n";
-    }
-
+    
     if (IsKeyPressed(KEY_SPACE))
     {
         points.clear();

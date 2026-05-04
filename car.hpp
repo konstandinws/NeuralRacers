@@ -34,7 +34,6 @@ struct Car {
 
     void updateCollisionLines();
     void update();
-    void draw();
     void drawCollision();
     void handleInput();
 };

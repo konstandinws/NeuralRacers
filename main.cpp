@@ -8,6 +8,8 @@
 #include "car.hpp"
 #include "track.hpp"
 #include "trackEditor.hpp"
+#include "renderer.hpp"
+#include "trackSerializer.hpp"
 
 const int W = 1200;
 const int H = 800;
@@ -52,17 +54,19 @@ void collision() {
 
 int main() {
 
+    // mettre cela dans un renderer pour que ce soit plus propre
     InitWindow(W, H, "trackmania 2D");
     SetTargetFPS(60);
     
 
     while(!WindowShouldClose()) {
         BeginDrawing();
-        car.draw();
+        Renderer::drawCar(&car);
         car.drawCollision();
         car.handleInput();
         t.handleClick();
         t.draw();
+        Renderer::showCarInfos(&car);
         collision();
         DrawCircle(W2, H2, 5, WHITE);
 
@@ -79,7 +83,12 @@ int main() {
         }
 
         if(IsKeyPressed(KEY_A)){
-            std::cout << car.pos.x << ", " << car.pos.y << "\n";
+            saveTrack(track);
+        }
+
+        if(IsKeyPressed(KEY_Q)){
+            loadTrack("track.txt", track);
+            track.isVisible = true;
         }
 
         ClearBackground(BLACK);
