@@ -2,6 +2,7 @@
 
 #include "point.hpp"
 #include "line.hpp"
+#include "raylib.h"
 #include <vector>
 #include <queue>
 #include "track.hpp"
@@ -14,7 +15,7 @@ struct TrackEditor {
 
     TrackEditor();
 
-    void handleClick();
+    void handleClick(const Camera2D& camera);
     Track getTrack();
     void draw();
 };

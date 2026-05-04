@@ -1,6 +1,5 @@
 #include "trackEditor.hpp"
 #include "track.hpp"
-#include "raylib.h"
 #include <iostream>
 #include <cmath>
 
@@ -8,11 +7,11 @@ TrackEditor::TrackEditor() {
     closeRadius = 20;
 }
 
-void TrackEditor::handleClick()
+void TrackEditor::handleClick(const Camera2D& camera)
 {
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
     {
-        Vector2 mousePos = GetMousePosition();
+        Vector2 mousePos = GetScreenToWorld2D(GetMousePosition(), camera);
         Point p = {mousePos.x, mousePos.y};
 
         if (points.size() > 3)

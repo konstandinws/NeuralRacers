@@ -72,7 +72,7 @@ int main() {
         Renderer::drawCar(&car);
         car.drawCollision();
         car.handleInput();
-        t.handleClick();
+        t.handleClick(camera);
         t.draw();
         Renderer::showCarInfos(&car);
         collision();

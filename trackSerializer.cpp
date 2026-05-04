@@ -59,6 +59,7 @@ void parseLine(std::string& line, std::vector<Point>& points, std::vector<Line>&
     if (points.size() == 0) {
         points.push_back(a);
     }
+
     points.push_back(b);
     lines.push_back(Line{a, b});
 }
