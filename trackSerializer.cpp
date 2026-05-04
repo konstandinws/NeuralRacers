@@ -55,7 +55,10 @@ void parseLine(std::string& line, std::vector<Point>& points, std::vector<Line>&
     Point a = {std::stof(x1), std::stof(y1)};
     Point b = {std::stof(x2), std::stof(y2)};
 
-    points.push_back(a);
+    // fix un peu degeu mais ca fait l'affaire pour eviter les doublons de points
+    if (points.size() == 0) {
+        points.push_back(a);
+    }
     points.push_back(b);
     lines.push_back(Line{a, b});
 }

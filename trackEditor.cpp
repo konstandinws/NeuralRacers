@@ -37,6 +37,7 @@ void TrackEditor::handleClick()
 
     if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
     {
+        std::cout << "Track EDITOR  \n";
         std::cout << "Points : ";
         for (Point p : points)
         {
