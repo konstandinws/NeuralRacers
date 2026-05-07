@@ -1,0 +1,31 @@
+#include "menuState.hpp"
+#include "app.hpp"       
+#include "raylib.h"
+#include "raygui.h"
+#include "renderer.hpp"
+
+void MenuState::update(App* app)
+{
+    
+}
+
+void MenuState::render(App* app)
+{
+    int startX = 1200 / 2 - 100;
+
+    DrawText("NEURO-TRACKMANIA", startX - 50, 100, 40, RAYWHITE);
+
+    // Si on clique, on dit au Contexte (App) de changer d'état !
+    if (GuiButton(Rectangle{(float)startX, 300, 200, 50}, "JOUER")) {
+        // On créera le PlayState plus tard !
+        // app->changeState(new PlayState()); 
+    }
+
+    if (GuiButton(Rectangle{(float)startX, 400, 200, 50}, "EDITEUR")) {
+        // app->changeState(new EditorState());
+    }
+
+    if (GuiButton(Rectangle{(float)startX, 500, 200, 50}, "QUITTER")) {
+        // app->quit();
+    }
+}

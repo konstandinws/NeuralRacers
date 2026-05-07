@@ -1,15 +1,14 @@
 #include <vector>
 #include <iostream>
 #include "raylib.h"
-#include <random>
-#include <queue>
-#include <unordered_map>
-#include <set>
+#define RAYGUI_IMPLEMENTATION
+#include "raygui.h"
 #include "car.hpp"
 #include "track.hpp"
 #include "trackEditor.hpp"
 #include "renderer.hpp"
 #include "trackSerializer.hpp"
+#include "app.hpp"
 
 const int W = 1200;
 const int H = 800;
@@ -58,6 +57,8 @@ int main() {
     InitWindow(W, H, "trackmania 2D");
     SetTargetFPS(60);
 
+
+
     // camera, j'utilise la camera de raylib et pas from scratch car elle utilise le gpu
     Camera2D camera = {0};
     
@@ -74,7 +75,7 @@ int main() {
         car.handleInput();
         t.handleClick(camera);
         t.draw();
-        Renderer::showCarInfos(&car);
+        
         collision();
         DrawCircle(W2, H2, 5, WHITE);
 
@@ -101,6 +102,7 @@ int main() {
 
         ClearBackground(BLACK);
         EndMode2D();
+        Renderer::showCarInfos(&car);
         EndDrawing();
     }
 
