@@ -14,17 +14,16 @@ public:
     const int W = 1200;
     const int H = 800;
     
-    Car car;
-    Track track;
-    TrackEditor editor;
-    Camera2D camera;
+    // Car car;
+    // Track track;
+    // TrackEditor editor;
+    // Camera2D camera;
 
     App();
     ~App();
 
     void run();
     void quit() { running = false; }
-    bool isRunning();
 
     void pushState(State* state);
     void popState();

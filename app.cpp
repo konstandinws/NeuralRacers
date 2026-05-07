@@ -10,10 +10,6 @@ App::App() : running(true) {
     pushState(new MenuState());
 }
 
-bool App::isRunning() {
-    return running;
-}
-
 App::~App() {
     while (!stateStack.empty()) popState();
     CloseWindow();

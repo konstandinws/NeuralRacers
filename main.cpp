@@ -53,60 +53,63 @@ void collision() {
 
 int main() {
 
-    // mettre cela dans un renderer pour que ce soit plus propre
-    InitWindow(W, H, "trackmania 2D");
-    SetTargetFPS(60);
+    App app;
+    app.run();
+
+    // // mettre cela dans un renderer pour que ce soit plus propre
+    // InitWindow(W, H, "trackmania 2D");
+    // SetTargetFPS(60);
 
 
 
-    // camera, j'utilise la camera de raylib et pas from scratch car elle utilise le gpu
-    Camera2D camera = {0};
+    // // camera, j'utilise la camera de raylib et pas from scratch car elle utilise le gpu
+    // Camera2D camera = {0};
     
 
-    while(!WindowShouldClose()) {
-        camera.target = {car.pos.x, car.pos.y};
-        camera.offset = {W2, H2};
-        camera.rotation = 0.0f;
-        camera.zoom = 1.0f;
-        BeginDrawing();
-        BeginMode2D(camera);
-        Renderer::drawCar(&car);
-        car.drawCollision();
-        car.handleInput();
-        t.handleClick(camera);
-        t.draw();
+    // while(!WindowShouldClose()) {
+    //     camera.target = {car.pos.x, car.pos.y};
+    //     camera.offset = {W2, H2};
+    //     camera.rotation = 0.0f;
+    //     camera.zoom = 1.0f;
+    //     BeginDrawing();
+    //     BeginMode2D(camera);
+    //     Renderer::drawCar(&car);
+    //     car.drawCollision();
+    //     car.handleInput();
+    //     t.handleClick(camera);
+    //     t.draw();
         
-        collision();
-        DrawCircle(W2, H2, 5, WHITE);
+    //     collision();
+    //     DrawCircle(W2, H2, 5, WHITE);
 
-        if(IsKeyPressed(KEY_E)) {
-            track = t.getTrack();
-        }
+    //     if(IsKeyPressed(KEY_E)) {
+    //         track = t.getTrack();
+    //     }
 
-        if(IsKeyPressed(KEY_V)) {
-            track.isVisible = true;
-        }
+    //     if(IsKeyPressed(KEY_V)) {
+    //         track.isVisible = true;
+    //     }
 
-        if(track.isVisible) {
-            track.draw();
-        }
+    //     if(track.isVisible) {
+    //         track.draw();
+    //     }
 
-        if(IsKeyPressed(KEY_A)){
-            saveTrack(track);
-        }
+    //     if(IsKeyPressed(KEY_A)){
+    //         saveTrack(track);
+    //     }
 
-        if(IsKeyPressed(KEY_Q)){
-            loadTrack("track.txt", track);
-            track.isVisible = true;
-        }
+    //     if(IsKeyPressed(KEY_Q)){
+    //         loadTrack("track.txt", track);
+    //         track.isVisible = true;
+    //     }
 
-        ClearBackground(BLACK);
-        EndMode2D();
-        Renderer::showCarInfos(&car);
-        EndDrawing();
-    }
+    //     ClearBackground(BLACK);
+    //     EndMode2D();
+    //     Renderer::showCarInfos(&car);
+    //     EndDrawing();
+    // }
 
-    CloseWindow();
+    // CloseWindow();
 
     return 0;
 }

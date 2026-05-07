@@ -26,6 +26,6 @@ void MenuState::render(App* app)
     }
 
     if (GuiButton(Rectangle{(float)startX, 500, 200, 50}, "QUITTER")) {
-        // app->quit();
+        app->quit();
     }
 }
