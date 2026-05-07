@@ -6,9 +6,7 @@
 
 void TrainConfigState::update(App* app)
 {
-    if (IsKeyPressed(KEY_ESCAPE)) {
-        app->pushState(new PauseState());
-    }
+
 }
 
 void TrainConfigState::render(App* app)

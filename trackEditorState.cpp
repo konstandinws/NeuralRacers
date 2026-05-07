@@ -8,9 +8,7 @@
 
 void TrackEditorState::update(App* app)
 {
-    if (IsKeyPressed(KEY_ESCAPE)) {
-        app->pushState(new PauseState());
-    }
+
 }
 
 void TrackEditorState::render(App* app)

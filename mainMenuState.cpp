@@ -10,9 +10,7 @@
 
 void MainMenuState::update(App* app)
 {
-    if (IsKeyPressed(KEY_ESCAPE)) {
-        app->pushState(new PauseState());
-    }
+
 }
 
 void MainMenuState::render(App* app)

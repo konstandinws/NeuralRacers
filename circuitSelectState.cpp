@@ -3,12 +3,12 @@
 #include "raylib.h"
 #include "raygui.h"
 #include "pauseState.hpp"
+#include "fileLoader.hpp"
+
 
 void CircuitSelectState::update(App* app)
 {
-    if (IsKeyPressed(KEY_ESCAPE)) {
-        app->changeState(new PauseState());
-    }
+
 }
 
 void CircuitSelectState::render(App* app)
@@ -19,6 +19,7 @@ void CircuitSelectState::render(App* app)
 
     if (GuiButton(Rectangle{400, 300, 200, 50}, "CIRCUIT 1")) {
         // app->changeState(new PlayState());
+        loadCircuitsFromFolder("Tracks");
     }
 
     if (GuiButton(Rectangle{400, 400, 200, 50}, "CIRCUIT 2")) {

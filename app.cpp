@@ -1,6 +1,7 @@
 #include "app.hpp"
 #include "mainMenuState.hpp"
 #include "raylib.h"
+#include "pauseState.hpp"
 
 App::App() : running(true) {
     InitWindow(1200, 800, "Neuro-Trackmania");
@@ -40,8 +41,13 @@ void App::changeState(State* state) {
 void App::run() {
     while (running && !WindowShouldClose()) {
         if (!stateStack.empty())
-            stateStack.back()->update(this);
-            // stateStack.back()->render(this);
+            if(stateStack.back()-> isPausable() && IsKeyPressed(KEY_ESCAPE)) {
+                pushState(new PauseState());
+            }
+            else{
+                stateStack.back()->update(this);
+                stateStack.back()->render(this);
+            }
 
         BeginDrawing();
         ClearBackground(BLACK);
@@ -49,8 +55,8 @@ void App::run() {
         // car je supprime tous les elements de boucle mais continue a appeler render, parfois ca marche surement une UB
         // un moyen de fixe et d'utiliser des lambdas pour faire les changements d'etats apres la boucle de rendu 
 
-        for (State* state : stateStack)
-            state->render(this);
+        // for (State* state : stateStack)
+        //     state->render(this);
         EndDrawing();
 
     }
