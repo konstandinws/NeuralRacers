@@ -5,6 +5,7 @@
 #include "pauseState.hpp"
 #include "fileLoader.hpp"
 #include "mainMenuState.hpp"
+#include <iostream>
 
 CircuitSelectState::CircuitSelectState() {
     scrollOffset = { 0, 0 }; 
