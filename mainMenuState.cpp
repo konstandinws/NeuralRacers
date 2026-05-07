@@ -21,7 +21,6 @@ void MainMenuState::render(App* app)
 
     // Si on clique, on dit au Contexte (App) de changer d'état !
     if (GuiButton(Rectangle{(float)startX, 300, 200, 50}, "JOUER")) {
-        // On créera le PlayState plus tard !
         app->changeState(new CircuitSelectState()); 
     }
 

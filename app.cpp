@@ -40,6 +40,7 @@ void App::changeState(State* state) {
 
 void App::run() {
     while (running && !WindowShouldClose()) {
+        ClearBackground(BLACK);
         if (!stateStack.empty())
             if(stateStack.back()-> isPausable() && IsKeyPressed(KEY_ESCAPE)) {
                 pushState(new PauseState());
@@ -50,13 +51,14 @@ void App::run() {
             }
 
         BeginDrawing();
-        ClearBackground(BLACK);
+        
         // bug probable car je change d'etat en etant dans la boucle quand j'appuie sur ESC
         // car je supprime tous les elements de boucle mais continue a appeler render, parfois ca marche surement une UB
         // un moyen de fixe et d'utiliser des lambdas pour faire les changements d'etats apres la boucle de rendu 
 
         // for (State* state : stateStack)
         //     state->render(this);
+
         EndDrawing();
 
     }

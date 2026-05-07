@@ -4,6 +4,15 @@
 #include "raygui.h"
 #include "pauseState.hpp"
 #include "fileLoader.hpp"
+#include "mainMenuState.hpp"
+
+CircuitSelectState::CircuitSelectState() {
+    scrollOffset = { 0, 0 }; 
+    
+    std::string folderPath = "Tracks";
+    
+    loadFilesNameFromFolder(folderPath, trackFiles);
+}
 
 
 void CircuitSelectState::update(App* app)
@@ -13,20 +22,36 @@ void CircuitSelectState::update(App* app)
 
 void CircuitSelectState::render(App* app)
 {
-    DrawText("SELECT YOUR CIRCUIT", 400, 100, 40, RAYWHITE);
+    DrawText("SELECT YOUR CIRCUIT", 400, 50, 40, RAYWHITE);
 
-    // charger les circuits depuis un dossier et les afficher dynamiquement
+    Rectangle panelBounds = { 400, 150, 400, 500 }; 
+    
+    float buttonHeight = 50.0f;
+    float spacing = 10.0f;
+    
+    float totalContentHeight = trackFiles.size() * (buttonHeight + spacing);
+    Rectangle contentBounds = { 0, 0, panelBounds.width - 20, totalContentHeight };
+    
+    Rectangle view; 
 
-    if (GuiButton(Rectangle{400, 300, 200, 50}, "CIRCUIT 1")) {
-        // app->changeState(new PlayState());
-        loadCircuitsFromFolder("Tracks");
+    GuiScrollPanel(panelBounds, NULL, contentBounds, &scrollOffset, &view);
+
+    BeginScissorMode(view.x, view.y, view.width, view.height);
+
+    for (size_t i = 0; i < trackFiles.size(); ++i) {
+        float btnY = panelBounds.y + (i * (buttonHeight + spacing)) + scrollOffset.y;
+        
+        Rectangle btnBounds = { panelBounds.x + 10, btnY, view.width - 20, buttonHeight };
+
+        if (GuiButton(btnBounds, trackFiles[i].c_str())) {
+            
+            std::cout << "Lancement du circuit : " << trackFiles[i] << std::endl;
+        }
     }
 
-    if (GuiButton(Rectangle{400, 400, 200, 50}, "CIRCUIT 2")) {
-        // app->changeState(new PlayState());
-    }
+    EndScissorMode();
 
-    if (GuiButton(Rectangle{400, 500, 200, 50}, "CIRCUIT 3")) {
-        // app->changeState(new PlayState());
+    if (GuiButton(Rectangle{400, 680, 200, 50}, "RETOUR")) {
+        app->changeState(new MainMenuState());
     }
 }   

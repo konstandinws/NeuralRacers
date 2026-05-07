@@ -2,4 +2,4 @@
 #include <iostream>
 
 
-void loadCircuitsFromFolder(const std::string& folderPath);
+void loadFilesNameFromFolder(const std::string& folderPath, std::vector<std::string>& filesNames);

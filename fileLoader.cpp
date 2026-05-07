@@ -1,7 +1,12 @@
 #include "fileLoader.hpp"
 
-void loadCircuitsFromFolder(const std::string& folderPath) {
-    for (const auto& element : std::filesystem::directory_iterator(folderPath)) {
-        std::cout << element.path() << std::endl;
+void loadFilesNameFromFolder(const std::string& folderPath, std::vector<std::string>& filesNames) {
+    if (std::filesystem::exists(folderPath)) {
+        for (const auto& entry : std::filesystem::directory_iterator(folderPath)) {
+            if (entry.path().extension() == ".txt") { 
+                filesNames.push_back(entry.path().filename().string());
+            }
+        }
     }
 }
+
