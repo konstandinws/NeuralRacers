@@ -6,6 +6,7 @@
 #include "circuitSelectState.hpp"
 #include "trackEditorState.hpp"
 #include "pauseState.hpp"
+#include "trainConfigState.hpp"
 
 void MainMenuState::update(App* app)
 {
@@ -30,7 +31,11 @@ void MainMenuState::render(App* app)
         app->changeState(new TrackEditorState());
     }
 
-    if (GuiButton(Rectangle{(float)startX, 500, 200, 50}, "QUITTER")) {
+    if (GuiButton(Rectangle{(float)startX, 500, 200, 50}, "ENTRAINER")) {
+        app->changeState(new TrainConfigState());
+    }
+
+    if (GuiButton(Rectangle{(float)startX, 600, 200, 50}, "QUITTER")) {
         app->quit();
     }
 }
