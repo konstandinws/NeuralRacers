@@ -1,7 +1,7 @@
 #pragma once
 #include "state.hpp"
 
-class MenuState : public State
+class CircuitSelectState : public State
 {
 public:
     void update(App* app) override;

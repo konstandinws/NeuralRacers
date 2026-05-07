@@ -28,4 +28,5 @@ public:
     void pushState(State* state);
     void popState();
     void changeState(State* state);
+    void clearAndPush(State* state);
 };

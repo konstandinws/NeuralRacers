@@ -4,6 +4,7 @@
 
 App::App() : running(true) {
     InitWindow(1200, 800, "Neuro-Trackmania");
+    SetExitKey(0); // eviter que le jeu se ferme avec la touche ESC
     SetTargetFPS(60);
 
     
@@ -24,6 +25,11 @@ void App::popState() {
         delete stateStack.back(); 
         stateStack.pop_back();    
     }
+}
+
+void App::clearAndPush(State* state) {
+    while (!stateStack.empty()) popState();
+    pushState(state);
 }
 
 void App::changeState(State* state) {

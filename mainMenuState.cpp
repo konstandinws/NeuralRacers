@@ -5,10 +5,13 @@
 #include "renderer.hpp"
 #include "circuitSelectState.hpp"
 #include "trackEditorState.hpp"
+#include "pauseState.hpp"
 
 void MainMenuState::update(App* app)
 {
-    
+    if (IsKeyPressed(KEY_ESCAPE)) {
+        app->pushState(new PauseState());
+    }
 }
 
 void MainMenuState::render(App* app)

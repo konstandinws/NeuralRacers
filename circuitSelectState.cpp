@@ -2,10 +2,13 @@
 #include "app.hpp"
 #include "raylib.h"
 #include "raygui.h"
+#include "pauseState.hpp"
 
 void CircuitSelectState::update(App* app)
 {
-    
+    if (IsKeyPressed(KEY_ESCAPE)) {
+        app->changeState(new PauseState());
+    }
 }
 
 void CircuitSelectState::render(App* app)
