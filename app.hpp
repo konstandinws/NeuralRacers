@@ -10,6 +10,7 @@ private:
     std::vector<State*> stateStack;
     bool running;
 
+
 public:
     const int W = 1200;
     const int H = 800;
@@ -21,6 +22,8 @@ public:
 
     App();
     ~App();
+
+
 
     void run();
     void quit() { running = false; }
