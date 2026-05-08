@@ -30,6 +30,7 @@ struct TrackEditor {
     void handleClick(const Camera2D& camera);
     void clear();
     void placeStart(const Camera2D& camera);
+    void placeAngleStart(const Camera2D& camera);
     void placeFinish(const Camera2D& camera);
     Track getTrack();
 

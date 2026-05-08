@@ -1,6 +1,7 @@
 #include "trackEditorState.hpp"
 #include "app.hpp"
 #include "raygui.h"
+#include "raymath.h"
 #include "trackEditor.hpp"
 
 TrackEditorState::TrackEditorState() {
@@ -39,6 +40,8 @@ void TrackEditorState::update(App* app) {
     if(editor.isComplete) {
         if(editor.start == nullptr) {
             editor.placeStart(camera);
+        } else if(editor.angleStart == nullptr && editor.start != nullptr) {
+            editor.placeAngleStart(camera);
         } else if(editor.finish == nullptr) {
             editor.placeFinish(camera);
         }
@@ -50,6 +53,14 @@ void TrackEditorState::render(App* app) {
     DrawText("Track Editor - WASD to move, Q/E to zoom, SPACE to clear, G to save", 10, 10, 20, RAYWHITE);
     BeginMode2D(camera);
     editor.handleClick(camera);
+
+    // mettre cela dans le renderer (flemme pour l'instant)
     editor.draw();
+    if(editor.angleStart == nullptr && editor.start != nullptr) {
+        DrawLine(editor.start->x, editor.start->y, GetScreenToWorld2D(GetMousePosition(), camera).x, GetScreenToWorld2D(GetMousePosition(), camera).y, BLUE);
+    }
+    if(editor.angleStart != nullptr) {
+        DrawLine(editor.start->x, editor.start->y, editor.start->x + cos(*editor.angleStart) * 50, editor.start->y + sin(*editor.angleStart) * 50, BLUE);
+    }
     EndMode2D();
 }

@@ -72,6 +72,18 @@ void TrackEditor::placeStart(const Camera2D& camera)
     }
 }
 
+void TrackEditor::placeAngleStart(const Camera2D& camera)
+{
+    if(angleStart == nullptr && start != nullptr) {
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        {
+            Vector2 mousePos = GetScreenToWorld2D(GetMousePosition(), camera);
+            float angle = atan2(mousePos.y - start->y, mousePos.x - start->x);
+            angleStart = new float(angle);
+        }
+    }
+}
+
 void TrackEditor::placeFinish(const Camera2D& camera)
 {
     // isComplete pour etre sur, on verifie deja avant
@@ -137,4 +149,6 @@ void TrackEditor::draw()
     if(finish != nullptr) {
         DrawLine(finish->a.x, finish->a.y, finish->b.x, finish->b.y, RED);
     }
+
+    
 }
