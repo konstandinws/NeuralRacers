@@ -7,8 +7,6 @@
 struct Track {
     std::vector<Point> points;
     std::vector<Line> lines;
-    bool isVisible;
-    bool isFinished;
 
     Track();
 

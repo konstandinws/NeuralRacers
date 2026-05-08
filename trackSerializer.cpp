@@ -3,16 +3,17 @@
 
 void saveTrack(const Track& track) {
 
-    if(track.isFinished) {
-        std::fstream file("track.txt", std::ios::out);
+    // j'ai enlever le if isFinished() car on peut pas enregister un track qui n'est pas fini
 
-        for(Line l : track.lines) {
-            file << l.a.x << "," << l.a.y << "-" << l.b.x << "," << l.b.y << std::endl;
-        }
-        file << "<EOF>";
+    std::fstream file("track.txt", std::ios::out);
 
-        file.close();
+    for (Line l : track.lines)
+    {
+        file << l.a.x << "," << l.a.y << "-" << l.b.x << "," << l.b.y << std::endl;
     }
+    file << "<EOF>";
+
+    file.close();
 }
 
 Track loadTrack(const std::string& filename) {

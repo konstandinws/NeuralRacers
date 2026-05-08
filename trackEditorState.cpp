@@ -36,9 +36,18 @@ void TrackEditorState::update(App* app) {
         editor.clear();
     }
 
+    if(editor.isComplete) {
+        if(editor.start == nullptr) {
+            editor.placeStart(camera);
+        } else if(editor.finish == nullptr) {
+            editor.placeFinish(camera);
+        }
+    }
+
 }
 
 void TrackEditorState::render(App* app) {
+    DrawText("Track Editor - WASD to move, Q/E to zoom, SPACE to clear, G to save", 10, 10, 20, RAYWHITE);
     BeginMode2D(camera);
     editor.handleClick(camera);
     editor.draw();
