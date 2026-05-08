@@ -5,9 +5,12 @@
 #include "track.hpp"
 
 
-PlayState::PlayState(const std::string& trackName) : car(600, 400), raceTime(0.0f) {
+PlayState::PlayState(const std::string& trackName) : raceTime(0.0f) {
     // Charger le track à partir du nom fourni
     track = loadTrack(trackName);
+
+    car = Car(track.start.x, track.start.y);
+    car.setStartAngle(track.angleStart);
 
     camera = { 0 };
     camera.target = car.pos;
@@ -27,13 +30,12 @@ void PlayState::update(App* app) {
 
     camera.target = car.pos;
 
-    // a cahnger la position de depart hardcodé 
-    if(car.pos != Vector2{600, 400}){
+    if(car.pos != Vector2{track.start.x, track.start.y}) {
         raceTime += GetFrameTime();
     }
 
     if(IsKeyPressed(KEY_R)) {
-        car.reset(600, 400);
+        car.reset(track.start.x, track.start.y, track.angleStart);
         raceTime = 0.0f;
     }
 }
@@ -45,6 +47,7 @@ void PlayState::render(App* app) {
     car.drawCollision();
     app->renderer.drawTrack(&track);
     app->renderer.drawCar(&car);
+    car.drawCollision();
    
     EndMode2D();
     DrawCircle(600, 400, 5, RED);

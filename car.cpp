@@ -50,10 +50,19 @@ void Car::drawCollision() {
     }
 }
 
-void Car::reset(float x, float y) {
+void Car::reset(float x, float y, float angle) {
     pos = {x, y};
     velocity = {0.0f, 0.0f};
-    angle = 0;
-    rad = 0;
+    this->angle = angle;
+    this->rad = angle * DEG2RAD;
     updateCollisionLines();
+}
+
+void Car::setStartPosition(float x, float y) {
+    pos = {x, y};
+}
+
+void Car::setStartAngle(float angle) {
+    this->angle = angle;
+    this->rad = angle * DEG2RAD;
 }

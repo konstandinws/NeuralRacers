@@ -25,5 +25,8 @@ struct Car {
     void update();
     void updateCollisionLines();
     void drawCollision();
-    void reset(float x, float y);
+
+    void setStartPosition(float x, float y);
+    void setStartAngle(float angle);
+    void reset(float x, float y, float angle);
 };
