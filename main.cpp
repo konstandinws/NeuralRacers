@@ -26,12 +26,12 @@ void drawGrid() {
     }
 }
 
-Car car = Car(W2, H2);
+// Car car = Car(W2, H2);
 
-TrackEditor t = TrackEditor();
-Track track;
+// TrackEditor t = TrackEditor();
+// Track track;
 
-const int gridSize = 200; 
+// const int gridSize = 200; 
 
 // il est problable que la unordered_map ne sache pas hasher un Vector2 car structure perso
 // soit implementer has_function de unordered_map ou d'en faire une perso pour acceder a tous les elements

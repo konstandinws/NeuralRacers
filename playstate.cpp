@@ -2,6 +2,7 @@
 #include "trackSerializer.hpp"
 #include "raymath.h"
 #include "app.hpp"
+#include "track.hpp"
 
 
 PlayState::PlayState(const std::string& trackName) : car(600, 400), raceTime(0.0f) {

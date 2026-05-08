@@ -16,7 +16,7 @@ struct TrackEditor {
     std::vector<Point> finishLine{};
     
     // utiliser des smarts_pointers pour eviter le destructeur
-    Vector2* start = nullptr;
+    Point* start = nullptr;
     Line* finish = nullptr;
     float* angleStart = nullptr;
 
@@ -32,11 +32,10 @@ struct TrackEditor {
     void placeStart(const Camera2D& camera);
     void placeAngleStart(const Camera2D& camera);
     void placeFinish(const Camera2D& camera);
-    Track getTrack();
+    Track saveTrack();
 
 public:
     bool isFinished();
-
     void draw();
 };
 

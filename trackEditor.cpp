@@ -58,6 +58,10 @@ void TrackEditor::handleClick(const Camera2D& camera)
             std::cout << "(" << p.x << ", " << p.y << ") ";
         }
         std::cout << "\n";
+
+        if(angleStart != nullptr) {
+            std::cout << "Angle Start : " << *angleStart << "\n";
+        }
     }
 }
 
@@ -67,7 +71,7 @@ void TrackEditor::placeStart(const Camera2D& camera)
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
             Vector2 mousePos = GetScreenToWorld2D(GetMousePosition(), camera);
-            start = new Vector2(mousePos);
+            start = new Point{mousePos.x, mousePos.y};
         }
     }
 }
@@ -118,9 +122,9 @@ void TrackEditor::clear()
     angleStart = nullptr;
 }
 
-Track TrackEditor::getTrack()
+Track TrackEditor::saveTrack()
 {
-    return Track{points, lines};
+    return Track(lines, *angleStart, *start, *finish);
 }
 
 bool TrackEditor::isFinished() {

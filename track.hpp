@@ -5,10 +5,12 @@
 #include "line.hpp"
 
 struct Track {
-    std::vector<Point> points;
     std::vector<Line> lines;
+    float angleStart;
+    Point start;
+    Line finish;
 
-    Track();
+    Track() = default;
 
-    Track(std::vector<Point> points, std::vector<Line> lines);
+    Track(std::vector<Line> lines, float angleStart, Point start, Line finish) : lines(lines), angleStart(angleStart), start(start), finish(finish) {};
 };

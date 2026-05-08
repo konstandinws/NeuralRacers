@@ -3,6 +3,8 @@
 #include "raygui.h"
 #include "raymath.h"
 #include "trackEditor.hpp"
+#include "trackSerializer.hpp"
+#include "track.hpp"
 
 TrackEditorState::TrackEditorState() {
     camera = { 0 };
@@ -35,6 +37,13 @@ void TrackEditorState::update(App* app) {
 
     if(IsKeyPressed(KEY_SPACE)) {
         editor.clear();
+    }
+
+    if (IsKeyPressed(KEY_G)) {
+        if(editor.isFinished()) {
+            Track track = editor.saveTrack();
+            saveTrack(track);
+        }
     }
 
     if(editor.isComplete) {
