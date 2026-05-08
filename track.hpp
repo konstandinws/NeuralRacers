@@ -13,6 +13,4 @@ struct Track {
     Track();
 
     Track(std::vector<Point> points, std::vector<Line> lines);
-
-    void draw();
 };

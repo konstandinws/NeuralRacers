@@ -25,7 +25,11 @@ void PlayState::update(App* app) {
     car.update();
 
     camera.target = car.pos;
-    raceTime += GetFrameTime();
+
+    // a cahnger la position de depart hardcodé 
+    if(car.pos != Vector2{600, 400}){
+        raceTime += GetFrameTime();
+    }
 
     if(IsKeyPressed(KEY_R)) {
         car.reset(600, 400);
@@ -38,13 +42,11 @@ void PlayState::render(App* app) {
     BeginMode2D(camera);
     // lignes de collision pour le debug
     car.drawCollision();
-    app->renderer.drawCar(&car);
     app->renderer.drawTrack(&track);
+    app->renderer.drawCar(&car);
    
     EndMode2D();
     DrawCircle(600, 400, 5, RED);
     app->renderer.showHUD(car, raceTime);
     app->renderer.showCarBindings();
-
-
 }
