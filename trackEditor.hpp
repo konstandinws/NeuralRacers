@@ -18,5 +18,6 @@ struct TrackEditor {
     void handleClick(const Camera2D& camera);
     Track getTrack();
     void draw();
+    void clear();
 };
 

@@ -51,11 +51,14 @@ void TrackEditor::handleClick(const Camera2D& camera)
         }
         std::cout << "\n";
     }
-    
-    if (IsKeyPressed(KEY_SPACE))
-    {
-        points.clear();
-        lines.clear();
+}
+
+
+void TrackEditor::clear()
+{
+    points.clear();
+    lines.clear();
+    while (!q.empty()) {
         q.pop();
     }
 }
