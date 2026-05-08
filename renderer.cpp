@@ -11,14 +11,7 @@ void Renderer::drawCar(Car* car) {
     DrawRectanglePro(renderRect, renderOrigin, car->angle, RED);
 }
 
-void Renderer::showCarInfos(Car* car) {
-    DrawText(TextFormat("Position: (%.2f, %.2f)", car->pos.x, car->pos.y), 10, 10, 20, WHITE);
-    DrawText(TextFormat("Angle: %.2f", car->angle), 10, 40, 20, WHITE);
-    DrawText(TextFormat("Velocity: (%.2f, %.2f)", car->velocity.x, car->velocity.y), 10, 70, 20, WHITE);
-}
-
 void Renderer::showHUD(const Car& car, float raceTime) {
-        // encapsuler ca dans une fonction du renderer
     DrawRectangle(0, 800 - 80, 1200, 80, Fade(LIGHTGRAY, 0.7f));
 
     // calcule l'hypothenuse
@@ -33,6 +26,13 @@ void Renderer::showHUD(const Car& car, float raceTime) {
     DrawText(textVitesse, 50, 800 - 55, 30, GREEN);
     DrawText(textTemps, 1200 - 350, 800 - 55, 30, YELLOW);
 }
+
 void Renderer::showCarBindings() {
     DrawText("Fleches: Conduire | R: Reset | ECHAP: Pause", 10, 10, 20, WHITE);
+}
+
+void Renderer::drawTrack(Track* track) {
+    for(Line& l : track->lines){
+        DrawLine(l.a.x, l.a.y, l.b.x, l.b.y, WHITE);
+    }
 }

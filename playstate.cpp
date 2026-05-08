@@ -36,10 +36,10 @@ void PlayState::update(App* app) {
 void PlayState::render(App* app) {
 
     BeginMode2D(camera);
-    track.draw();
+    // lignes de collision pour le debug
     car.drawCollision();
     app->renderer.drawCar(&car);
-    // app->renderer.drawTrack(&track);
+    app->renderer.drawTrack(&track);
    
     EndMode2D();
     DrawCircle(600, 400, 5, RED);
