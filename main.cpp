@@ -38,17 +38,17 @@ const int gridSize = 200;
 // std::unordered_map<Vector2, std::set<Line>> grid;
 
 // parcourir tous les murs et calculer dans quel zone ils se situent
-void collision() {
-    Vector2 collisionPoint = {0, 0};
-    for(Line l : track.lines){
-        for(Line carLine : car.carLines){
-            if(CheckCollisionLines(Vector2{carLine.a.x, carLine.a.y}, Vector2{carLine.b.x, carLine.b.y}, Vector2{l.a.x, l.a.y}, Vector2{l.b.x, l.b.y}, &collisionPoint)){
-                car.carRect.x = W2;
-                car.carRect.y = H2;
-            }
-        }   
-    }
-}
+// void collision() {
+//     Vector2 collisionPoint = {0, 0};
+//     for(Line l : track.lines){
+//         for(Line carLine : car.carLines){
+//             if(CheckCollisionLines(Vector2{carLine.a.x, carLine.a.y}, Vector2{carLine.b.x, carLine.b.y}, Vector2{l.a.x, l.a.y}, Vector2{l.b.x, l.b.y}, &collisionPoint)){
+//                 car.carRect.x = W2;
+//                 car.carRect.y = H2;
+//             }
+//         }   
+//     }
+// }
 
 
 int main() {

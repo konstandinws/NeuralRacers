@@ -1,10 +1,15 @@
+#pragma once
 #include "car.hpp"
+#include "track.hpp"
 
-namespace Renderer {
+class Renderer {
+public:
     void drawCar(Car* car);
     void showCarInfos(Car* car);
-    void drawTrack();
+    void drawTrack(Track* track);
     void drawGrid();
 
-    void showBindings();
-}
+    void showCarBindings();
+
+    void showHUD(const Car& car, float raceTime);
+};

@@ -7,6 +7,7 @@ App::App() : running(true) {
     InitWindow(1200, 800, "Neuro-Trackmania");
     SetExitKey(0); // eviter que le jeu se ferme avec la touche ESC
     SetTargetFPS(60);
+    Renderer renderer;
 
     
     pushState(new MainMenuState());

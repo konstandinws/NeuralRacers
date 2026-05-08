@@ -5,36 +5,25 @@
 #include "line.hpp"
 
 struct Car {
-    int width;
-    int height;
-    int w2;
-    int h2; 
-    float angle;
-    float rad;
     Vector2 pos;
     Vector2 velocity;
+    float angle;
+    float rad;
     float friction;
+    
+    int width, height;
 
-    Rectangle carRect;
-    Vector2 origin;
-    Point a;
-    Point b;
-    Point c;
-    Point d;
-
-    Line haut;
-    Line gauche;
-    Line bas;
-    Line droite;
-
-    Line carLines[4];
+    Line carLines[4]; 
 
     Car() = default;
     Car(float x, float y);
 
-    void updateCollisionLines();
+    // utile pour par lier le mouvement de la voiture au clavier
+    void turn(float amount);
+    void accelerate(float amount);
+
     void update();
+    void updateCollisionLines();
     void drawCollision();
-    void handleInput();
     void reset(float x, float y);
 };

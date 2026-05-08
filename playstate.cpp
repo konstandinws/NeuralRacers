@@ -1,6 +1,7 @@
 #include "playState.hpp"
 #include "trackSerializer.hpp"
 #include "raymath.h"
+#include "app.hpp"
 
 
 PlayState::PlayState(const std::string& trackName) : car(600, 400), raceTime(0.0f) {
@@ -16,8 +17,13 @@ PlayState::PlayState(const std::string& trackName) : car(600, 400), raceTime(0.0
 }
 
 void PlayState::update(App* app) {
-    car.handleInput();
+    if (IsKeyDown(KEY_LEFT))  car.turn(-4.0f);
+    if (IsKeyDown(KEY_RIGHT)) car.turn(4.0f);
+    if (IsKeyDown(KEY_UP))    car.accelerate(1.0f);
+    if (IsKeyDown(KEY_DOWN))  car.accelerate(-1.0f);
+
     car.update();
+
     camera.target = car.pos;
     raceTime += GetFrameTime();
 
@@ -32,20 +38,13 @@ void PlayState::render(App* app) {
     BeginMode2D(camera);
     track.draw();
     car.drawCollision();
-    DrawCircle(600, 400, 5, RED);
+    app->renderer.drawCar(&car);
+    // app->renderer.drawTrack(&track);
+   
     EndMode2D();
+    DrawCircle(600, 400, 5, RED);
+    app->renderer.showHUD(car, raceTime);
+    app->renderer.showCarBindings();
 
-    DrawRectangle(0, 800 - 80, 1200, 80, Fade(BLACK, 0.7f));
 
-    // calcule l'hypothenuse
-    float speedPixels = Vector2Length(car.velocity);
-
-    int displaySpeed = (int)(speedPixels * 15.0f);
-
-    const char* textVitesse = TextFormat("VITESSE : %03d KM/H", displaySpeed); 
-    const char* textTemps = TextFormat("TEMPS : %.2f s", raceTime);
-
-    // On dessine le texte par-dessus le rectangle
-    DrawText(textVitesse, 50, 800 - 55, 30, GREEN);
-    DrawText(textTemps, 1200 - 350, 800 - 55, 30, YELLOW);
 }

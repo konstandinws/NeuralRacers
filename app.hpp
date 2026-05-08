@@ -4,17 +4,20 @@
 #include "car.hpp"
 #include "track.hpp"
 #include "trackEditor.hpp"
+#include "renderer.hpp"
 
 class App {
 private:
     std::vector<State*> stateStack;
     bool running;
+    
 
 
 public:
     const int W = 1200;
     const int H = 800;
-    
+    Renderer renderer;
+
     // Car car;
     // Track track;
     // TrackEditor editor;

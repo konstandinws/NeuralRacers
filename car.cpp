@@ -1,33 +1,27 @@
 #include "car.hpp"
 #include <cmath>
 
-Car::Car(float x, float y) {
-    pos = {x, y};
-    width = 20;
-    height = 50;
-    w2 = width/2;
-    h2 = height/2;
-    angle = 0;
+Car::Car(float x, float y) : pos({x, y}), velocity({0, 0}), angle(0), friction(0.1f), width(20), height(50) {
     rad = angle * DEG2RAD;
-    velocity = {0.0f, 0.0f};
-    friction = 0.1f;
+    updateCollisionLines();
+}
 
-    origin = { (float)width / 2, (float)height / 2 };
-    carRect = { pos.x, pos.y, (float)width, (float)height };
-    a = {pos.x - w2, pos.y - h2};
-    b = {pos.x + w2, pos.y - h2};
-    c = {pos.x + w2, pos.y + h2};
-    d = {pos.x - w2, pos.y + h2};
+void Car::turn(float amount) {
+    angle += amount;
+    rad = angle * DEG2RAD;
+}
 
-    haut = {a, b};
-    gauche = {b, c};
-    bas = {c, d};
-    droite = {d, a};
+void Car::accelerate(float amount) {
+    velocity.x += amount * sin(rad);
+    velocity.y -= amount * cos(rad); 
+}
 
-    carLines[0] = haut;
-    carLines[1] = gauche;
-    carLines[2] = bas;
-    carLines[3] = droite;
+void Car::update() {
+    velocity.x *= 1.0f - friction;
+    velocity.y *= 1.0f - friction;
+
+    pos.x += velocity.x;
+    pos.y += velocity.y;
 
     updateCollisionLines();
 }
@@ -35,27 +29,24 @@ Car::Car(float x, float y) {
 void Car::updateCollisionLines() {
     float cos_a = cos(rad);
     float sin_a = sin(rad);
+    float w2 = width / 2.0f;
+    float h2 = height / 2.0f;
     
-    a = {pos.x - w2 * cos_a - (-h2) * sin_a, pos.y - w2 * sin_a + (-h2) * cos_a};
-    b = {pos.x + w2 * cos_a - (-h2) * sin_a, pos.y + w2 * sin_a + (-h2) * cos_a};
-    c = {pos.x + w2 * cos_a - h2 * sin_a, pos.y + w2 * sin_a + h2 * cos_a};
-    d = {pos.x - w2 * cos_a - h2 * sin_a, pos.y - w2 * sin_a + h2 * cos_a};
+    Point p1 = {pos.x - w2 * cos_a - (-h2) * sin_a, pos.y - w2 * sin_a + (-h2) * cos_a};
+    Point p2 = {pos.x + w2 * cos_a - (-h2) * sin_a, pos.y + w2 * sin_a + (-h2) * cos_a};
+    Point p3 = {pos.x + w2 * cos_a - h2 * sin_a, pos.y + w2 * sin_a + h2 * cos_a};
+    Point p4 = {pos.x - w2 * cos_a - h2 * sin_a, pos.y - w2 * sin_a + h2 * cos_a};
     
-    haut = {a, b};
-    gauche = {b, c};
-    bas = {c, d};
-    droite = {d, a};
-    
-    carLines[0] = Car::haut;
-    carLines[1] = Car::gauche;
-    carLines[2] = Car::bas;
-    carLines[3] = Car::droite;
+    carLines[0] = {p1, p2}; // haut
+    carLines[1] = {p2, p3}; // droite
+    carLines[2] = {p3, p4}; // bas
+    carLines[3] = {p4, p1}; // gauche
 }
 
-void Car::drawCollision()
-{
+// fonction plus pour le debug
+void Car::drawCollision() {
     for(Line& l : carLines){
-            DrawLine(l.a.x, l.a.y, l.b.x, l.b.y, GREEN);
+        DrawLine(l.a.x, l.a.y, l.b.x, l.b.y, GREEN);
     }
 }
 
@@ -63,41 +54,6 @@ void Car::reset(float x, float y) {
     pos = {x, y};
     velocity = {0.0f, 0.0f};
     angle = 0;
-    rad = angle * DEG2RAD;
+    rad = 0;
+    updateCollisionLines();
 }
-
-void Car::update() {
-
-        // pourquoi j'ai carRect ?    
-
-        // carRect.x += velocity.x;
-        // carRect.y += velocity.y;
-        // pos.x = carRect.x;
-        // pos.y = carRect.y;
-        pos.x += velocity.x;
-        pos.y += velocity.y;
-        updateCollisionLines();
-    }
-
-void Car::handleInput(){
-    
-        if(IsKeyDown(KEY_LEFT)){
-            angle -= 4;
-            rad = angle * DEG2RAD;
-        }
-        if(IsKeyDown(KEY_RIGHT)){
-            angle += 4;
-            rad = angle * DEG2RAD;
-        }
-        if(IsKeyDown(KEY_UP)){
-            velocity.x += 1 * sin(rad);
-            velocity.y -= 1 * cos(rad); 
-        }
-        if(IsKeyDown(KEY_DOWN)){
-            velocity.x -= 1 * sin(rad);
-            velocity.y += 1 * cos(rad); 
-        }
-
-        velocity.x *= 1 - friction;
-        velocity.y *= 1 - friction;
-    }
