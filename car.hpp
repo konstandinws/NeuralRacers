@@ -29,7 +29,7 @@ struct Car {
 
     Line carLines[4];
 
-
+    Car() = default;
     Car(float x, float y);
 
     void updateCollisionLines();

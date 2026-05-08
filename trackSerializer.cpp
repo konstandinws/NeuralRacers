@@ -15,7 +15,7 @@ void saveTrack(const Track& track) {
     }
 }
 
-void loadTrack(const std::string& filename, Track& track) {
+Track loadTrack(const std::string& filename) {
 
     std::vector<Point> points;
     std::vector<Line> lines;
@@ -31,10 +31,9 @@ void loadTrack(const std::string& filename, Track& track) {
         parseLine(line, points, lines);
     }
 
-    track.points = points;
-    track.lines = lines;
-
     file.close();
+
+    return Track(points, lines);
 }
 
 void parseLine(std::string& line, std::vector<Point>& points, std::vector<Line>& lines) {

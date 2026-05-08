@@ -6,6 +6,7 @@
 #include "fileLoader.hpp"
 #include "mainMenuState.hpp"
 #include <iostream>
+#include "playState.hpp"
 
 CircuitSelectState::CircuitSelectState() {
     scrollOffset = { 0, 0 }; 
@@ -45,8 +46,7 @@ void CircuitSelectState::render(App* app)
         Rectangle btnBounds = { panelBounds.x + 10, btnY, view.width - 20, buttonHeight };
 
         if (GuiButton(btnBounds, trackFiles[i].c_str())) {
-            
-            std::cout << "Lancement du circuit : " << trackFiles[i] << std::endl;
+            app->changeState(new PlayState("Tracks/" + trackFiles[i]));
         }
     }
 
