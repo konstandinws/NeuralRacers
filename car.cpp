@@ -59,11 +59,23 @@ void Car::drawCollision()
     }
 }
 
+void Car::reset(float x, float y) {
+    pos = {x, y};
+    velocity = {0.0f, 0.0f};
+    angle = 0;
+    rad = angle * DEG2RAD;
+}
+
 void Car::update() {
-        carRect.x += velocity.x;
-        carRect.y += velocity.y;
-        pos.x = carRect.x;
-        pos.y = carRect.y;
+
+        // pourquoi j'ai carRect ?    
+
+        // carRect.x += velocity.x;
+        // carRect.y += velocity.y;
+        // pos.x = carRect.x;
+        // pos.y = carRect.y;
+        pos.x += velocity.x;
+        pos.y += velocity.y;
         updateCollisionLines();
     }
 
@@ -88,6 +100,4 @@ void Car::handleInput(){
 
         velocity.x *= 1 - friction;
         velocity.y *= 1 - friction;
-
-        Car::update();
     }

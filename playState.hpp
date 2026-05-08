@@ -19,4 +19,5 @@ private:
     Car car;    
     Track track;
     Camera2D camera;
+    float raceTime;
 };

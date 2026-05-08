@@ -36,4 +36,5 @@ struct Car {
     void update();
     void drawCollision();
     void handleInput();
+    void reset(float x, float y);
 };
