@@ -11,7 +11,7 @@ public:
 
     void drawCar(Car* car);
     void showCarBindings();
-    void showHUD(const Car& car, float raceTime);
+    void showHUD(const Car& car, float raceTime, float endRaceTime);
 
 
 };

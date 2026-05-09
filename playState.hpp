@@ -4,6 +4,7 @@
 #include <string>
 #include "track.hpp"
 #include "car.hpp"
+#include <limits>
 
 class PlayState : public State {
 public:
@@ -14,10 +15,10 @@ public:
     void update(App* app) override;
     void render(App* app) override;
 
-
 private:
     Car car;    
     Track track;
     Camera2D camera;
     float raceTime;
+    float endRaceTime = std::numeric_limits<float>::max();
 };

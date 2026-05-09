@@ -11,7 +11,7 @@ void Renderer::drawCar(Car* car) {
     DrawRectanglePro(renderRect, renderOrigin, car->angle, RED);
 }
 
-void Renderer::showHUD(const Car& car, float raceTime) {
+void Renderer::showHUD(const Car& car, float raceTime, float endRaceTime) {
     DrawRectangle(0, 800 - 80, 1200, 80, Fade(LIGHTGRAY, 0.7f));
 
     // calcule l'hypothenuse
@@ -21,10 +21,13 @@ void Renderer::showHUD(const Car& car, float raceTime) {
 
     const char* textVitesse = TextFormat("VITESSE : %03d KM/H", displaySpeed); 
     const char* textTemps = TextFormat("TEMPS : %.2f s", raceTime);
-
+    const char* textMeilleurTemps = TextFormat("MEILLEUR : %.2f s", endRaceTime);
     // On dessine le texte par-dessus le rectangle
     DrawText(textVitesse, 50, 800 - 55, 30, GREEN);
     DrawText(textTemps, 1200 - 350, 800 - 55, 30, YELLOW);
+    if(endRaceTime < std::numeric_limits<float>::max()) {
+        DrawText(textMeilleurTemps, 1200 - 350, 800 - 25, 30, GOLD);
+    }
 }
 
 void Renderer::showCarBindings() {
@@ -35,4 +38,5 @@ void Renderer::drawTrack(Track* track) {
     for(Line& l : track->lines){
         DrawLine(l.a.x, l.a.y, l.b.x, l.b.y, WHITE);
     }
+    DrawLine(track->finish.a.x, track->finish.a.y, track->finish.b.x, track->finish.b.y, YELLOW);
 }

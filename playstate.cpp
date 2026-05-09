@@ -28,11 +28,23 @@ void PlayState::update(App* app) {
     if (IsKeyDown(KEY_DOWN))  car.accelerate(-1.0f);
 
     car.update();
-
     camera.target = car.pos;
 
     if(car.pos != Vector2{track.start.x, track.start.y}) {
         raceTime += GetFrameTime();
+    }
+
+    if (track.checkWallCollision(car)) {
+        car.reset(track.start.x, track.start.y, (track.angleStart * RAD2DEG) + 90.0f);
+        raceTime = 0.0f;
+    }
+
+    if (track.checkFinishLine(car)) {
+        if (raceTime < endRaceTime){
+            endRaceTime = raceTime;
+        }
+        car.reset(track.start.x, track.start.y, (track.angleStart * RAD2DEG) + 90.0f);
+        raceTime = 0.0f;
     }
 
     if(IsKeyPressed(KEY_R)) {
@@ -52,6 +64,6 @@ void PlayState::render(App* app) {
    
     EndMode2D();
     DrawCircle(600, 400, 5, RED);
-    app->renderer.showHUD(car, raceTime);
+    app->renderer.showHUD(car, raceTime, endRaceTime);
     app->renderer.showCarBindings();
 }
