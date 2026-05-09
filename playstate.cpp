@@ -3,14 +3,15 @@
 #include "raymath.h"
 #include "app.hpp"
 #include "track.hpp"
+#include <iostream>
 
 
 PlayState::PlayState(const std::string& trackName) : raceTime(0.0f) {
     // Charger le track à partir du nom fourni
     track = loadTrack(trackName);
 
-    car = Car(track.start.x, track.start.y);
-    car.setStartAngle(track.angleStart);
+    // FIX abominable je me suis perdu dans les randiants vs degres
+    car = Car(track.start.x, track.start.y, (track.angleStart * RAD2DEG) + 90.0f); 
 
     camera = { 0 };
     camera.target = car.pos;
@@ -35,7 +36,7 @@ void PlayState::update(App* app) {
     }
 
     if(IsKeyPressed(KEY_R)) {
-        car.reset(track.start.x, track.start.y, track.angleStart);
+        car.reset(track.start.x, track.start.y, (track.angleStart * RAD2DEG) + 90.0f);
         raceTime = 0.0f;
     }
 }

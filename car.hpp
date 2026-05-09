@@ -16,7 +16,7 @@ struct Car {
     Line carLines[4]; 
 
     Car() = default;
-    Car(float x, float y);
+    Car(float x, float y, float angle);
 
     // utile pour par lier le mouvement de la voiture au clavier
     void turn(float amount);

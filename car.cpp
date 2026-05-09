@@ -1,7 +1,7 @@
 #include "car.hpp"
 #include <cmath>
 
-Car::Car(float x, float y) : pos({x, y}), velocity({0, 0}), angle(0), friction(0.1f), width(20), height(50) {
+Car::Car(float x, float y, float angle) : pos({x, y}), velocity({0, 0}), angle(angle), friction(0.1f), width(20), height(50) {
     rad = angle * DEG2RAD;
     updateCollisionLines();
 }
