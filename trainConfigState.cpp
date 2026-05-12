@@ -5,14 +5,16 @@
 #include "pauseState.hpp"
 #include "trackSerializer.hpp"
 
-TrainConfigState::TrainConfigState() {
+TrainConfigState::TrainConfigState()
+{
     track = loadTrack("Tracks/trackV3.txt");
-    aiCars.emplace_back(AICar(track.start.x, track.start.y, (track.angleStart * RAD2DEG) + 90.0f));
 
-    camera = { 0 };
+    createAICars(20);
+
+    camera = {0};
     camera.zoom = 1.0f;
-    camera.offset = { 0, 0 }; 
-    camera.target = { 0, 0 }; 
+    camera.offset = {0, 0};
+    camera.target = {0, 0};
 }
 
 void TrainConfigState::update(App* app)
@@ -38,15 +40,15 @@ void TrainConfigState::update(App* app)
         camera.zoom /= 1.1f; // Dézoomer
     }
 
-    // // les rayons des capteurs de l'ia
-    // for (AICar& aiCar : aiCars) {
-    //     aiCar.updateSensors(track);
-    // }
-
     for(AICar& aiCar : aiCars) {
-        aiCar.updateAI(track); // deltaTime fixe pour l'instant
+        aiCar.updateAI(track);
+        if (track.checkWallCollision(aiCar)) {
+            aiCar.isDead = true;
+        }
     }
 }
+
+
 
 void TrainConfigState::render(App* app)
 {
@@ -61,4 +63,12 @@ void TrainConfigState::render(App* app)
     
     EndMode2D();
     
+}
+
+void TrainConfigState::createAICars(int numCars)
+{
+    for (int i = 0; i < numCars; ++i)
+    {
+        aiCars.emplace_back(AICar(track.start.x, track.start.y, (track.angleStart * RAD2DEG) + 90.0f));
+    }
 }

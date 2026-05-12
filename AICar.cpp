@@ -73,4 +73,5 @@ void AICar::updateAI(const Track& track) {
     this->accelerate(accAmount);
 
     Car::update();
+
 }
