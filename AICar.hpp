@@ -3,6 +3,7 @@
 #include "car.hpp"
 #include <vector>
 #include "track.hpp"
+#include "neuralNetwork.hpp"
 
 struct Sensor {
     float angleOffset;  
@@ -15,6 +16,7 @@ public:
     std::vector<Sensor> sensors;
     bool isDead = false;
     float score = 0.0f;
+    NeuralNetwork nn;
 
     AICar(float x, float y, float angle);
     void updateSensors(const Track& track);

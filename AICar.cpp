@@ -1,9 +1,8 @@
 #include "AICar.hpp"
 #include "raymath.h"
 
-AICar::AICar(float x, float y, float angle) : Car(x, y, angle) {
+AICar::AICar(float x, float y, float angle) : Car(x, y, angle), nn({10, 8, 2}) { // 10 capteurs d'entrée, 8 neurones cachés, 2 sorties (volant et pédales)
     initializeSensors(90.0f, 10, 500.0f); 
-
 }
 
 void AICar::initializeSensors(float fov, int numRays, float maxDistance) {
