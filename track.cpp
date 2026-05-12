@@ -21,3 +21,10 @@ bool Track::checkFinishLine(const Car& car){
     }   
     return false;
 }
+
+Vector2 Track::getFinishLineCenter() const {
+    return { 
+        (finish.a.x + finish.b.x) / 2.0f, 
+        (finish.a.y + finish.b.y) / 2.0f 
+    };
+}

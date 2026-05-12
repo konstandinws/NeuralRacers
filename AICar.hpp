@@ -18,6 +18,11 @@ public:
     float score = 0.0f;
     NeuralNetwork nn;
 
+    // Pour evite que les voitures fassent du surplace
+    float bestDistanceToFinish = std::numeric_limits<float>::max(); 
+    float stagnationCounter = 0.0f;
+    float stagnationLimit = 3.0f;
+
     AICar(float x, float y, float angle);
     void updateSensors(const Track& track);
     void updateAI(const Track& track);

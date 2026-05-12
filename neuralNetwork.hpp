@@ -21,9 +21,7 @@ public:
 
     NeuralNetwork(const std::vector<int>& topology);
 
-    // La fonction magique qui convertit les lasers en commandes de conduite !
     std::vector<float> feedForward(const std::vector<float>& inputs);
     
-    // (À venir pour l'évolution)
-    // void mutate(float mutationRate); 
+    void mutate(float mutationRate);
 };

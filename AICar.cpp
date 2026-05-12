@@ -54,6 +54,20 @@ void AICar::updateAI(const Track& track) {
 
     updateSensors(track); 
 
+    float currentDistance = Vector2Distance(this->pos, track.getFinishLineCenter());
+
+    score  = -currentDistance; 
+
+     if (currentDistance < bestDistanceToFinish) {
+        bestDistanceToFinish = currentDistance;
+        stagnationCounter = 0.0f; 
+    } else {
+        stagnationCounter += GetFrameTime();
+        if (stagnationCounter >= stagnationLimit) {
+            isDead = true;
+            return;
+        }
+    }
     
     std::vector<float> sensorData;
     for (const Sensor& s : sensors) {
@@ -62,15 +76,16 @@ void AICar::updateAI(const Track& track) {
 
     std::vector<float> outputs = nn.feedForward(sensorData);
 
-    // 4. On transforme la pensée en action mécanique !
-    // outputs[0] gère le volant (de -1.0 à 1.0)
-    // outputs[1] gère l'accélérateur (de -1.0 à 1.0)
-    
-    float turnAmount = outputs[0] * 4.0f;     // 4.0f est ta vitesse de rotation max
-    float accAmount = outputs[1] * 1.0f;      // 1.0f est ton accélération max
+    //outputs sont normalisés entre -1 et 1 grâce à la fonction d'activation tanh
+
+    float turnAmount = outputs[0] * 4.0f;    
+    float accAmount = outputs[1] * 1.0f;      
 
     this->turn(turnAmount);
     this->accelerate(accAmount);
+
+    // recompense la voiture en fonction du temps qu'elle survit
+    score += 0.1f; 
 
     Car::update();
 

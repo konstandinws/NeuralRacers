@@ -18,4 +18,6 @@ struct Track {
     bool checkWallCollision(const Car& car);
 
     bool checkFinishLine(const Car& car);
+
+    Vector2 getFinishLineCenter() const;
 };

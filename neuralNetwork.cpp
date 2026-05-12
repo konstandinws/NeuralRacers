@@ -54,3 +54,22 @@ std::vector<float> NeuralNetwork::feedForward(const std::vector<float>& inputs) 
 
     return currentInputs; // Renvoie les 2 valeurs finales (volant et pédales)
 }
+
+void NeuralNetwork::mutate(float mutationRate) {
+    for (Layer& layer : layers) {
+        for (int i = 0; i < layer.numNeurons; i++) {
+            
+            // Muter le biais -0.5 à 0.5
+            if (((float)rand() / RAND_MAX) < mutationRate) {
+                layer.biases[i] += (((float)rand() / RAND_MAX) * 2.0f - 1.0f) * 0.5f; 
+            }
+
+            // 2. Muter les poids
+            for (int j = 0; j < layer.numInputsPerNeuron; j++) {
+                if (((float)rand() / RAND_MAX) < mutationRate) {
+                    layer.weights[i][j] += (((float)rand() / RAND_MAX) * 2.0f - 1.0f) * 0.5f;
+                }
+            }
+        }
+    }
+}

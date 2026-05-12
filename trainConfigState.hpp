@@ -10,6 +10,7 @@ public:
     void update(App* app) override;
     void render(App* app) override;
     void createAICars(int numCars);
+    void nextGeneration();
     TrainConfigState();
 
 private:
