@@ -60,7 +60,6 @@ void PlayState::render(App* app) {
     car.drawCollision();
     app->renderer.drawTrack(&track);
     app->renderer.drawCar(&car);
-    car.drawCollision();
    
     EndMode2D();
     app->renderer.showHUD(car, raceTime, endRaceTime);

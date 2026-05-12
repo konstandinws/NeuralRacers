@@ -38,9 +38,13 @@ void TrainConfigState::update(App* app)
         camera.zoom /= 1.1f; // Dézoomer
     }
 
-    // les rayons des capteurs de l'ia
-    for (AICar& aiCar : aiCars) {
-        aiCar.updateSensors(track);
+    // // les rayons des capteurs de l'ia
+    // for (AICar& aiCar : aiCars) {
+    //     aiCar.updateSensors(track);
+    // }
+
+    for(AICar& aiCar : aiCars) {
+        aiCar.updateAI(track); // deltaTime fixe pour l'instant
     }
 }
 
@@ -52,7 +56,9 @@ void TrainConfigState::render(App* app)
     app->renderer.drawAICars(aiCars);
     for (AICar& aiCar : aiCars) {
         aiCar.drawSensors();
+        aiCar.drawCollision();
     }
+    
     EndMode2D();
     
 }

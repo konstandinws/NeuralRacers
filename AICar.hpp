@@ -20,6 +20,7 @@ public:
 
     AICar(float x, float y, float angle);
     void updateSensors(const Track& track);
+    void updateAI(const Track& track);
     void drawSensors();
     void initializeSensors(float fov, int numRays, float maxDistance);
 };

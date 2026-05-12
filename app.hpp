@@ -17,6 +17,7 @@ public:
     const int W = 1200;
     const int H = 800;
     Renderer renderer;
+    float dt;
 
     // Car car;
     // Track track;

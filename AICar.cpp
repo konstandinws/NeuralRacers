@@ -24,8 +24,8 @@ void AICar::drawSensors() {
 
 void AICar::updateSensors(const Track& track) {
     for (auto& sensor : sensors) {
-        float sensorAngle = angle + sensor.angleOffset;
-        Vector2 sensorDir = { sinf(sensorAngle * DEG2RAD), cosf(sensorAngle * DEG2RAD) };
+        float sensorAngle = angle - 90.0f + sensor.angleOffset;
+        Vector2 sensorDir = { cosf(sensorAngle * DEG2RAD), sinf(sensorAngle * DEG2RAD) };
         Vector2 sensorEnd = { pos.x + sensorDir.x * sensor.maxDistance, pos.y + sensorDir.y * sensor.maxDistance };
 
         // collision avec les murs
@@ -47,4 +47,30 @@ void AICar::updateSensors(const Track& track) {
         sensor.readValue = closestDist / sensor.maxDistance; // Normalise a [0, 1]
         sensor.endPoint = closestPoint;
     }
+}
+
+void AICar::updateAI(const Track& track) {
+    if (isDead) return;
+
+    updateSensors(track); 
+
+    
+    std::vector<float> sensorData;
+    for (const Sensor& s : sensors) {
+        sensorData.push_back(s.readValue); // On envoie les valeurs (0.0 à 1.0)
+    }
+
+    std::vector<float> outputs = nn.feedForward(sensorData);
+
+    // 4. On transforme la pensée en action mécanique !
+    // outputs[0] gère le volant (de -1.0 à 1.0)
+    // outputs[1] gère l'accélérateur (de -1.0 à 1.0)
+    
+    float turnAmount = outputs[0] * 4.0f;     // 4.0f est ta vitesse de rotation max
+    float accAmount = outputs[1] * 1.0f;      // 1.0f est ton accélération max
+
+    this->turn(turnAmount);
+    this->accelerate(accAmount);
+
+    Car::update();
 }

@@ -41,6 +41,7 @@ void App::changeState(State* state) {
 
 void App::run() {
     while (running && !WindowShouldClose()) {
+        dt = GetFrameTime();
 
         BeginDrawing();
         ClearBackground(BLACK);
