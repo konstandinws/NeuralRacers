@@ -8,7 +8,7 @@ struct Sensor {
     float angleOffset;  
     float maxDistance;  
     float readValue;    
-    Point endPoint;     
+    Vector2 endPoint;     
 };
 class AICar : public Car {
 public:
@@ -19,4 +19,5 @@ public:
     AICar(float x, float y, float angle);
     void updateSensors(const Track& track);
     void drawSensors();
+    void initializeSensors(float fov, int numRays, float maxDistance);
 };

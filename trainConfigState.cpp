@@ -37,6 +37,11 @@ void TrainConfigState::update(App* app)
     if (IsKeyPressed(KEY_E)) {
         camera.zoom /= 1.1f; // Dézoomer
     }
+
+    // les rayons des capteurs de l'ia
+    for (AICar& aiCar : aiCars) {
+        aiCar.updateSensors(track);
+    }
 }
 
 void TrainConfigState::render(App* app)
@@ -45,6 +50,9 @@ void TrainConfigState::render(App* app)
     // lignes de collision pour le debug
     app->renderer.drawTrack(&track);
     app->renderer.drawAICars(aiCars);
+    for (AICar& aiCar : aiCars) {
+        aiCar.drawSensors();
+    }
     EndMode2D();
     
 }
