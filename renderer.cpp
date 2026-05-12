@@ -42,21 +42,20 @@ void Renderer::drawTrack(Track* track) {
 }
 
 void Renderer::drawAICars(const std::vector<AICar>& aiCars) {
-    Rectangle renderRect;
-    Vector2 renderOrigin;
-
     for (const AICar& aiCar : aiCars) {
+        Rectangle renderRect = { 
+            aiCar.pos.x, 
+            aiCar.pos.y, 
+            (float)aiCar.width, 
+            (float)aiCar.height 
+        };
+        Vector2 renderOrigin = { (float)aiCar.width / 2.0f, (float)aiCar.height / 2.0f };
+
         if (!aiCar.isDead) {
-            renderRect.x = aiCar.pos.x;
-            renderRect.y = aiCar.pos.y;
-            renderOrigin.x = (float)aiCar.width / 2.0f;
-            renderOrigin.y = (float)aiCar.height / 2.0f;
-            if(aiCar.isDead){
-                DrawRectanglePro(renderRect, renderOrigin, aiCar.angle, Color{ 230, 41, 55, 100});
-            } else {
-                DrawRectanglePro(renderRect, renderOrigin, aiCar.angle, RED);
-            }
+            DrawRectanglePro(renderRect, renderOrigin, aiCar.angle, RED);
+        } else {
+            DrawRectanglePro(renderRect, renderOrigin, aiCar.angle, Color{ 230, 41, 55, 100});
         }
     }
-
 }
+
