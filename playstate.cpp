@@ -63,7 +63,6 @@ void PlayState::render(App* app) {
     car.drawCollision();
    
     EndMode2D();
-    DrawCircle(600, 400, 5, RED);
     app->renderer.showHUD(car, raceTime, endRaceTime);
     app->renderer.showCarBindings();
 }

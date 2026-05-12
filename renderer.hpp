@@ -1,6 +1,7 @@
 #pragma once
 #include "car.hpp"
 #include "track.hpp"
+#include "AICar.hpp"
 
 class Renderer {
 public:
@@ -13,5 +14,6 @@ public:
     void showCarBindings();
     void showHUD(const Car& car, float raceTime, float endRaceTime);
 
+    void drawAICars(const std::vector<AICar>& aiCars);
 
 };
