@@ -19,7 +19,7 @@ LIBRARY_PATHS = -L$(RAYLIB_PATH)/lib
 LIBS = -lraylib -lopengl32 -lgdi32 -lwinmm
 
 # Options de compilation
-CFLAGS = -std=c++17
+CFLAGS = -std=c++17 -Iinclude
 
 # -----------------------------------------------------
 # Règles Make
