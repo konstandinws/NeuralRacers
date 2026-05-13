@@ -5,7 +5,7 @@ void saveTrack(const Track& track) {
 
     // j'ai enlever le if isFinished() car on peut pas enregister un track qui n'est pas fini
 
-    std::fstream file("Tracks/trackTest.txt", std::ios::out);
+    std::fstream file("Tracks/NewTrack.txt", std::ios::out);
 
     file << "S " << track.start.x << "," << track.start.y << std::endl;
     file << "A " << track.angleStart << std::endl;

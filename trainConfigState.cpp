@@ -8,7 +8,7 @@
 
 TrainConfigState::TrainConfigState()
 {
-    track = loadTrack("Tracks/trackV4.txt");
+    track = loadTrack("Tracks/trackTest.txt");
 
     createAICars(20);
 

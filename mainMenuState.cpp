@@ -17,9 +17,9 @@ void MainMenuState::render(App* app)
 {
     int startX = 1200 / 2 - 100;
 
-    DrawText("NEURO-TRACKMANIA", startX - 50, 100, 40, RAYWHITE);
+    DrawText("Trackmania", startX - 30, 100, 40, RAYWHITE);
 
-    // Si on clique, on dit au Contexte (App) de changer d'état !
+    // Si on clique, on dit App de changer d'état 
     if (GuiButton(Rectangle{(float)startX, 300, 200, 50}, "JOUER")) {
         app->changeState(new CircuitSelectState()); 
     }
