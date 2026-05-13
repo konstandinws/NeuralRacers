@@ -1,4 +1,5 @@
 #include "neuralNetwork.hpp"
+#include <algorithm> 
 
 // init d'une chouche
 Layer::Layer(int numInputs, int numNeurons) {
@@ -62,12 +63,15 @@ void NeuralNetwork::mutate(float mutationRate) {
             // Muter le biais -0.5 à 0.5
             if (((float)rand() / RAND_MAX) < mutationRate) {
                 layer.biases[i] += (((float)rand() / RAND_MAX) * 2.0f - 1.0f) * 0.5f; 
-            }
+
+                layer.biases[i] = std::clamp(layer.biases[i], -2.0f, 2.0f); // clamp les biais pour eviter les valeurs extrêmes
+            } 
 
             // 2. Muter les poids
             for (int j = 0; j < layer.numInputsPerNeuron; j++) {
                 if (((float)rand() / RAND_MAX) < mutationRate) {
                     layer.weights[i][j] += (((float)rand() / RAND_MAX) * 2.0f - 1.0f) * 0.5f;
+                    layer.weights[i][j] = std::clamp(layer.weights[i][j], -2.0f, 2.0f); // clamp les poids pour eviter les valeurs extrêmes entre -2 et 2
                 }
             }
         }

@@ -1,5 +1,6 @@
 #include "AICar.hpp"
 #include "raymath.h"
+#include <iostream>
 
 AICar::AICar(float x, float y, float angle) : Car(x, y, angle), nn({10, 8, 2}) { // 10 capteurs d'entrée, 8 neurones cachés, 2 sorties (volant et pédales)
     initializeSensors(90.0f, 10, 500.0f); 
@@ -53,6 +54,7 @@ void AICar::updateAI(const Track& track) {
     if (isDead) return;
 
     updateSensors(track); 
+    aliveTimer += GetFrameTime();
 
     float currentDistance = Vector2Distance(this->pos, track.getFinishLineCenter());
 
@@ -66,6 +68,20 @@ void AICar::updateAI(const Track& track) {
         if (stagnationCounter >= stagnationLimit) {
             isDead = true;
             return;
+        }
+    }
+
+    if (aliveTimer > GRACE_PERIOD) {
+        if (Vector2Length(velocity) < MIN_SPEED) {
+            lowSpeedTimer += GetFrameTime(); // Le chronomètre tourne !
+        } else {
+            lowSpeedTimer = 0.0f;       // Elle a réaccéléré, on pardonne et on remet à zéro.
+        }
+
+        // Sentence irrévocable
+        if (lowSpeedTimer > MAX_SLOW_TIME) {
+            isDead = true;
+            score -= 20.0f; // On pénalise les conducteurs lents
         }
     }
     

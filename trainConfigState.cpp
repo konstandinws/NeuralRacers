@@ -48,6 +48,10 @@ void TrainConfigState::update(App* app)
         if (track.checkWallCollision(aiCar)) {
             aiCar.isDead = true;
         }
+        if (track.checkFinishLine(aiCar)) {
+            aiCar.score += 1000.0f; // Bonus pour avoir franchi la ligne d'arrivée
+            aiCar.isDead = true; // On considère que la voiture a terminé sa course
+        }
         if (!aiCar.isDead) {
             allDead = false;
         }
@@ -58,7 +62,7 @@ void TrainConfigState::update(App* app)
     }
 }
 
-// LES FPS ILS ONT APPRIS A FAIRE DU SURPLACE
+// LES FPD ILS ONT APPRIS A FAIRE DU SURPLACE
 
 void TrainConfigState::render(App* app)
 {
@@ -93,31 +97,29 @@ void TrainConfigState::nextGeneration() {
         }
     }
 
-    // 2. Préparer le nouveau point de départ (selon ton circuit)
+    // Point de depart
     float startX = track.start.x;
     float startY = track.start.y;
     float startAngle = (track.angleStart * RAD2DEG) + 90.0f;
-
-    // 3. Créer la nouvelle population
+    
     std::vector<AICar> newPopulation;
     
     for (int i = 0; i < aiCars.size(); i++) {
         // On crée une nouvelle voiture toute neuve sur la ligne de départ
         AICar clone(startX, startY, startAngle);
         
-        // On lui greffe le cerveau du champion !
+        // on clone la meilleure voiture de la génération précédente
         clone.nn = bestCar.nn; 
 
-        // Si ce n'est PAS la première voiture, on la mute 
-        // (10% de chances de muter chaque neurone)
+        // 100% de chances de muter chaque neurone sauf permier
         if (i > 0) {
-            clone.nn.mutate(0.1f); 
+            clone.nn.mutate(1.0f); 
         }
 
         newPopulation.push_back(clone);
     }
 
-    // 4. On remplace l'ancienne population par la nouvelle
+    // remplace l'ancienne population par la nouvelle
     aiCars = newPopulation;
     
     std::cout << "Nouvelle génération créée avec un score de champion de : " << bestCar.score << std::endl;
