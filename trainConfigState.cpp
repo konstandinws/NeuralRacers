@@ -62,7 +62,7 @@ void TrainConfigState::update(App* app)
     }
 }
 
-// LES FPD ILS ONT APPRIS A FAIRE DU SURPLACE
+// LES FDP ILS ONT APPRIS A FAIRE DU SURPLACE
 
 void TrainConfigState::render(App* app)
 {
@@ -70,6 +70,8 @@ void TrainConfigState::render(App* app)
     // lignes de collision pour le debug
     app->renderer.drawTrack(&track);
     app->renderer.drawAICars(aiCars);
+    
+    // fonction de debug pour visualiser les capteurs
     for (AICar& aiCar : aiCars) {
         if(!aiCar.isDead) {
             aiCar.drawSensors();

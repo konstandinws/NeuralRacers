@@ -73,7 +73,7 @@ void AICar::updateAI(const Track& track) {
 
     if (aliveTimer > GRACE_PERIOD) {
         if (Vector2Length(velocity) < MIN_SPEED) {
-            lowSpeedTimer += GetFrameTime(); // Le chronomètre tourne !
+            lowSpeedTimer += GetFrameTime(); // Le chronomètre tourne 
         } else {
             lowSpeedTimer = 0.0f;       // Elle a réaccéléré, on pardonne et on remet à zéro.
         }

@@ -57,7 +57,7 @@ void PlayState::render(App* app) {
 
     BeginMode2D(camera);
     // lignes de collision pour le debug
-    car.drawCollision();
+    //car.drawCollision();
     app->renderer.drawTrack(&track);
     app->renderer.drawCar(&car);
    
