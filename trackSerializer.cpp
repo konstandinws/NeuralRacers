@@ -5,15 +5,15 @@ void saveTrack(const Track& track) {
 
     // j'ai enlever le if isFinished() car on peut pas enregister un track qui n'est pas fini
 
-    std::fstream file("Tracks/trackV4.txt", std::ios::out);
+    std::fstream file("Tracks/trackTest.txt", std::ios::out);
 
     file << "S " << track.start.x << "," << track.start.y << std::endl;
     file << "A " << track.angleStart << std::endl;
-    file << "F " << track.finish.a.x << "," << track.finish.a.y << "-" << track.finish.b.x << "," << track.finish.b.y << std::endl;
+    file << "F " << track.finish.a.x << "," << track.finish.a.y << ";" << track.finish.b.x << "," << track.finish.b.y << std::endl;
 
     for (Line l : track.lines)
     {
-        file << l.a.x << "," << l.a.y << "-" << l.b.x << "," << l.b.y << std::endl;
+        file << l.a.x << "," << l.a.y << ";" << l.b.x << "," << l.b.y << std::endl;
     }
     file << "<EOF>";
 
@@ -51,7 +51,7 @@ Track loadTrack(const std::string& filename) {
 }
 
 void parseLine(std::string& line, std::vector<Line>& lines) {
-    int dash = line.find("-");
+    int dash = line.find(";");
     std::string subString1 = line.substr(0, dash);
     std::string subString2 = line.substr(dash + 1);
 
@@ -86,7 +86,7 @@ void parseAngleStart(std::string& line, float& angleStart) {
 
 void parseFinish(std::string& line, Line& finish) {
     std::string subString = line.substr(2);
-    int dash = subString.find("-");
+    int dash = subString.find(";");
     std::string subString1 = subString.substr(0, dash);
     std::string subString2 = subString.substr(dash + 1);
 
