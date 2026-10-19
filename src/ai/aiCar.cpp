@@ -3,7 +3,7 @@
 #include <iostream>
 
 AICar::AICar(float x, float y, float angle) : Car(x, y, angle), nn(AI_TOPOLOGY) {
-    initializeSensors(90.0f, 10, 500.0f); 
+    initializeSensors(90.0f, SENSOR_COUNT, 500.0f);
 }
 
 void AICar::initializeSensors(float fov, int numRays, float maxDistance) {
@@ -50,23 +50,35 @@ void AICar::updateSensors(const Track& track) {
     }
 }
 
+std::vector<float> AICar::computeInputs() const {
+    std::vector<float> inputs;
+    for (const Sensor& s : sensors) {
+        inputs.push_back(s.readValue); // On envoie les valeurs (0.0 à 1.0)
+    }
+
+    // vitesse dans le repere de la voiture, pour qu'elle sache quand freiner et si elle derape
+    // vitesse max atteinte pedale a fond : v = (v + a) * (1 - friction)  =>  v = a * (1 - friction) / friction
+    float maxSpeed = MAX_ACCELERATION * (1.0f - friction) / friction;
+    Vector2 forward = { sinf(rad), -cosf(rad) };  // meme direction que Car::accelerate
+    Vector2 right = { cosf(rad), sinf(rad) };
+    inputs.push_back(Clamp(Vector2DotProduct(velocity, forward) / maxSpeed, -1.0f, 1.0f)); // negative en marche arriere
+    inputs.push_back(Clamp(Vector2DotProduct(velocity, right) / maxSpeed, -1.0f, 1.0f));   // derapage gauche / droite
+
+    return inputs;
+}
+
 void AICar::updateAI(const Track& track) {
     if (isDead) return;
 
     updateSensors(track);
     aliveTimer += GetFrameTime();
 
-    std::vector<float> sensorData;
-    for (const Sensor& s : sensors) {
-        sensorData.push_back(s.readValue); // On envoie les valeurs (0.0 à 1.0)
-    }
-
-    std::vector<float> outputs = nn.feedForward(sensorData);
+    std::vector<float> outputs = nn.feedForward(computeInputs());
 
     //outputs sont normalisés entre -1 et 1 grâce à la fonction d'activation tanh
 
-    float turnAmount = outputs[0] * 4.0f;    
-    float accAmount = outputs[1] * 1.0f;      
+    float turnAmount = outputs[0] * MAX_TURN;
+    float accAmount = outputs[1] * MAX_ACCELERATION;
 
     this->turn(turnAmount);
     this->accelerate(accAmount);

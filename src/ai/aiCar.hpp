@@ -5,9 +5,13 @@
 #include "game/track.hpp"
 #include "ai/neuralNetwork.hpp"
 
-// architecture du reseau des voitures : 10 capteurs d'entree, 8 neurones caches, 2 sorties (volant et pedales)
+inline constexpr int SENSOR_COUNT = 10;
+
+// entrees du reseau : les 10 capteurs, puis la vitesse vers l'avant et la vitesse laterale (derapage)
+// 8 neurones caches, 2 sorties (volant et pedales)
 // un modele sauvegarde ne peut etre recharge que s'il a la meme topologie
-inline const std::vector<int> AI_TOPOLOGY = {10, 8, 2};
+// (les anciens modeles a 10 entrees sont adaptes au chargement, voir NeuralNetwork::widenInputs)
+inline const std::vector<int> AI_TOPOLOGY = {SENSOR_COUNT + 2, 8, 2};
 
 struct Sensor {
     float angleOffset;  
@@ -21,6 +25,9 @@ public:
     bool isDead = false;
     float score = 0.0f;
     NeuralNetwork nn;
+
+    float MAX_TURN = 4.0f;          // degres par frame quand le volant est a fond
+    float MAX_ACCELERATION = 1.0f;  // pixels par frame ajoutes a la vitesse quand la pedale est a fond
 
     // progression sur le circuit : index de la prochaine porte a franchir (checkpoints puis arrivee)
     // progress = portes franchies + avancement (0 a 1) vers la suivante
@@ -46,6 +53,8 @@ public:
 
     AICar(float x, float y, float angle);
     void updateSensors(const Track& track);
+    // entrees du reseau, dans l'ordre de AI_TOPOLOGY : capteurs, vitesse avant, vitesse laterale
+    std::vector<float> computeInputs() const;
     void updateAI(const Track& track);
     void updateProgress(const Track& track);
     void drawSensors();

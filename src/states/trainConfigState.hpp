@@ -34,6 +34,7 @@ private:
     std::vector<std::string> modelNames;
     int selectedModel = -1;    // -1 = nouveau modele
     std::optional<SavedModel> selectedModelData;
+    bool selectedModelAdapted = false;  // ancien modele auquel on a ajoute les entrees de vitesse
     std::string newModelName;
     std::string modelError;
     float modelScroll = 0.0f;

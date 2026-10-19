@@ -24,6 +24,11 @@ public:
 
     // nombre de neurones par couche, entree comprise (ex : {10, 8, 2})
     std::vector<int> getTopology() const;
+
+    // ajoute des entrees avec des poids a 0 : le reseau donne exactement les memes sorties qu'avant,
+    // et l'entrainement peut ensuite apprendre a utiliser les nouvelles entrees
+    // renvoie false si newInputCount est plus petit que le nombre actuel d'entrees
+    bool widenInputs(int newInputCount);
     
     // mutationRate : probabilite de muter chaque poids/biais
     // mutationStrength : ecart-type du bruit gaussien ajoute

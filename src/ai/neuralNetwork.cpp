@@ -68,6 +68,18 @@ std::vector<int> NeuralNetwork::getTopology() const {
     return topology;
 }
 
+bool NeuralNetwork::widenInputs(int newInputCount) {
+    if (layers.empty() || newInputCount < layers[0].numInputsPerNeuron) {
+        return false;
+    }
+    Layer& first = layers[0];
+    for (std::vector<float>& neuronWeights : first.weights) {
+        neuronWeights.resize(newInputCount, 0.0f);
+    }
+    first.numInputsPerNeuron = newInputCount;
+    return true;
+}
+
 void NeuralNetwork::mutate(float mutationRate, float mutationStrength) {
     // bruit gaussien : la plupart des mutations sont petites, quelques-unes plus grandes
     std::normal_distribution<float> noise(0.0f, mutationStrength);

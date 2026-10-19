@@ -42,11 +42,26 @@ void TrainConfigState::selectModel(int index) {
     modelError.clear();
     selectedModelData.reset();
 
+    selectedModelAdapted = false;
+
     if (index >= 0) {
         selectedModelData = loadModel(modelNames[index]);
         if (!selectedModelData) {
             modelError = "Fichier de modele invalide";
-        } else if (selectedModelData->network.getTopology() != AI_TOPOLOGY) {
+            root.invalidate();
+            return;
+        }
+
+        // ancien modele sans les entrees de vitesse : on les ajoute avec des poids a 0
+        // (il roule exactement comme avant, puis apprend a s'en servir)
+        std::vector<int> topology = selectedModelData->network.getTopology();
+        bool onlyFewerInputs = topology.size() == AI_TOPOLOGY.size() && topology[0] < AI_TOPOLOGY[0]
+            && std::equal(topology.begin() + 1, topology.end(), AI_TOPOLOGY.begin() + 1);
+        if (onlyFewerInputs) {
+            selectedModelAdapted = selectedModelData->network.widenInputs(AI_TOPOLOGY[0]);
+        }
+
+        if (selectedModelData->network.getTopology() != AI_TOPOLOGY) {
             // reseau sauvegarde avec une autre architecture : inutilisable par les voitures actuelles
             modelError = "Modele incompatible (autre architecture)";
             selectedModelData.reset();
@@ -130,6 +145,7 @@ ui::ComponentPtr TrainConfigState::buildUI(App* app) {
 
     std::string modelInfo = !modelError.empty() ? modelError
         : isNewModel ? "Laisser vide pour : " + defaultModelName
+        : selectedModelAdapted ? std::to_string(selectedModelData->generation) + " generations, adapte a la vitesse"
         : "Deja entraine : " + std::to_string(selectedModelData->generation) + " generations";
     Color modelInfoColor = !modelError.empty() ? ui::theme::accent : ui::theme::border;
 
