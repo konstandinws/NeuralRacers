@@ -3,20 +3,9 @@
 #include "raymath.h"
 #include "editor/trackEditor.hpp"
 #include "io/trackSerializer.hpp"
+#include "io/fileLoader.hpp"
 #include "game/track.hpp"
 #include "ui/ui.hpp"
-
-// n'accepte que les caracteres valides dans un nom de fichier, les espaces deviennent des _
-static int fileNameFilter(int c) {
-    bool letterOrDigit = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9');
-    if (letterOrDigit || c == '_' || c == '-') {
-        return c;
-    }
-    if (c == ' ') {
-        return '_';
-    }
-    return 0;
-}
 
 TrackEditorState::TrackEditorState() {
     camera = { 0 };
@@ -171,7 +160,7 @@ void TrackEditorState::buildSavePopup() {
             .placeholder = defaultName,
             .onChange = [this](const std::string& value) { trackName = value; },
             .onSubmit = [this] { confirmSave(); },
-            .filter = fileNameFilter,
+            .filter = fileNameCharFilter,
         }),
         ui::label({
             .text = hasError ? saveError : "Laisser vide pour : " + defaultName,

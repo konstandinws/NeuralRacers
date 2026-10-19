@@ -2,7 +2,7 @@
 #include "raymath.h"
 #include <iostream>
 
-AICar::AICar(float x, float y, float angle) : Car(x, y, angle), nn({10, 8, 2}) { // 10 capteurs d'entrée, 8 neurones cachés, 2 sorties (volant et pédales)
+AICar::AICar(float x, float y, float angle) : Car(x, y, angle), nn(AI_TOPOLOGY) {
     initializeSensors(90.0f, 10, 500.0f); 
 }
 

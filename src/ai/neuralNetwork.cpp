@@ -57,6 +57,17 @@ std::vector<float> NeuralNetwork::feedForward(const std::vector<float>& inputs) 
     return currentInputs; // Renvoie les 2 valeurs finales (volant et pédales)
 }
 
+std::vector<int> NeuralNetwork::getTopology() const {
+    std::vector<int> topology;
+    if (!layers.empty()) {
+        topology.push_back(layers[0].numInputsPerNeuron);
+    }
+    for (const Layer& layer : layers) {
+        topology.push_back(layer.numNeurons);
+    }
+    return topology;
+}
+
 void NeuralNetwork::mutate(float mutationRate, float mutationStrength) {
     // bruit gaussien : la plupart des mutations sont petites, quelques-unes plus grandes
     std::normal_distribution<float> noise(0.0f, mutationStrength);

@@ -1,9 +1,7 @@
 #include "io/trackSerializer.hpp"
+#include "io/fileLoader.hpp"
 #include <string>
 #include <filesystem>
-#include <algorithm>
-
-static const std::string DEFAULT_TRACK_PREFIX = "nouveau_circuit_";
 
 static std::string trackPath(const std::string& name) {
     return TRACKS_DIR + name + ".txt";
@@ -14,20 +12,7 @@ bool trackExists(const std::string& name) {
 }
 
 std::string nextDefaultTrackName() {
-    int highest = 0;
-    if (std::filesystem::exists(TRACKS_DIR)) {
-        for (const auto& entry : std::filesystem::directory_iterator(TRACKS_DIR)) {
-            std::string stem = entry.path().stem().string();
-            if (entry.path().extension() != ".txt" || stem.rfind(DEFAULT_TRACK_PREFIX, 0) != 0) {
-                continue;
-            }
-            std::string number = stem.substr(DEFAULT_TRACK_PREFIX.size());
-            if (!number.empty() && std::all_of(number.begin(), number.end(), ::isdigit)) {
-                highest = std::max(highest, std::stoi(number));
-            }
-        }
-    }
-    return DEFAULT_TRACK_PREFIX + std::to_string(highest + 1);
+    return nextFreeName(TRACKS_DIR, "nouveau_circuit_");
 }
 
 bool saveTrack(const Track& track, const std::string& name) {

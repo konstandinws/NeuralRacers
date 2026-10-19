@@ -5,6 +5,10 @@
 #include "game/track.hpp"
 #include "ai/neuralNetwork.hpp"
 
+// architecture du reseau des voitures : 10 capteurs d'entree, 8 neurones caches, 2 sorties (volant et pedales)
+// un modele sauvegarde ne peut etre recharge que s'il a la meme topologie
+inline const std::vector<int> AI_TOPOLOGY = {10, 8, 2};
+
 struct Sensor {
     float angleOffset;  
     float maxDistance;  

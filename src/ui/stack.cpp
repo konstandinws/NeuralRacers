@@ -22,6 +22,7 @@ Stack::Stack(Direction direction, StackProps props, std::vector<ComponentPtr> ch
         float gaps = props.spacing * (this->children.size() - 1);
         (vertical ? bounds.height : bounds.width) += gaps;
     }
+    bounds.width = std::max(bounds.width, props.minWidth);
     layout();
 }
 

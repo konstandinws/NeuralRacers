@@ -1,11 +1,14 @@
 #pragma once
+#include <functional>
+#include <optional>
 #include <string>
 #include <vector>
 #include "core/state.hpp"
+#include "io/modelSerializer.hpp"
 #include "ui/component.hpp"
 #include "ui/root.hpp"
 
-// ecran avant l'entrainement : choix du circuit et du nombre de voitures
+// ecran avant l'entrainement : choix du circuit, du modele (nouveau ou existant) et du nombre de voitures
 class TrainConfigState : public State
 {
 public:
@@ -17,13 +20,25 @@ public:
 
 private:
     ui::ComponentPtr buildUI(App* app);
+    // liste defilante de boutons dont un seul est selectionne
+    ui::ComponentPtr selectList(const std::vector<std::string>& labels, int selected, std::function<void(int)> onSelect, float* scroll);
     void selectTrack(int index);
+    void selectModel(int index);
+    void launch(App* app);
 
     std::vector<std::string> trackFiles;
     int selectedTrack = -1;
     int selectedCheckpoints = 0;
+    float trackScroll = 0.0f;  // garde la position des listes quand l'interface est reconstruite
+
+    std::vector<std::string> modelNames;
+    int selectedModel = -1;    // -1 = nouveau modele
+    std::optional<SavedModel> selectedModelData;
+    std::string newModelName;
+    std::string modelError;
+    float modelScroll = 0.0f;
+
     int carCount = 50;
-    float listScroll = 0.0f;  // garde la position de la liste quand l'interface est reconstruite
 
     ui::Root root;
 

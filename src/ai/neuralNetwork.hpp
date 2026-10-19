@@ -21,6 +21,9 @@ public:
     NeuralNetwork(const std::vector<int>& topology);
 
     std::vector<float> feedForward(const std::vector<float>& inputs);
+
+    // nombre de neurones par couche, entree comprise (ex : {10, 8, 2})
+    std::vector<int> getTopology() const;
     
     // mutationRate : probabilite de muter chaque poids/biais
     // mutationStrength : ecart-type du bruit gaussien ajoute

@@ -7,12 +7,18 @@
 #include <iostream>
 #include <algorithm>
 
-TrainingState::TrainingState(const std::string& trackPath, int numCars)
+TrainingState::TrainingState(TrainingConfig config) : modelName(config.modelName)
 {
-    track = loadTrack(trackPath);
+    track = loadTrack(config.trackPath);
+
+    const NeuralNetwork* startNetwork = nullptr;
+    if (config.startModel) {
+        startNetwork = &config.startModel->network;
+        generation = config.startModel->generation + 1;  // on reprend le compteur du modele
+    }
 
     // il faut au moins 2 voitures pour avoir 2 parents dans nextGeneration
-    createAICars(std::max(2, numCars));
+    createAICars(std::max(2, config.carCount), startNetwork);
 
     camera = {0};
     camera.zoom = 1.0f;
@@ -79,14 +85,27 @@ void TrainingState::render(App* app)
     
     EndMode2D();
 
-    DrawText(TextFormat("Generation %d | Meilleur score precedent : %.0f", generation, bestScoreLastGeneration), 10, 10, 20, RAYWHITE);
+    DrawText(TextFormat("Modele : %s | Generation %d | Meilleur score precedent : %.0f", modelName.c_str(), generation, bestScoreLastGeneration), 10, 10, 20, RAYWHITE);
+    if (lastSaveFailed) {
+        DrawText("Echec de la sauvegarde du modele", 10, 35, 20, RED);
+    }
 }
 
-void TrainingState::createAICars(int numCars)
+void TrainingState::createAICars(int numCars, const NeuralNetwork* startNetwork)
 {
     for (int i = 0; i < numCars; ++i)
     {
-        aiCars.emplace_back(AICar(track.start.x, track.start.y, (track.angleStart * RAD2DEG) + 90.0f));
+        AICar car(track.start.x, track.start.y, (track.angleStart * RAD2DEG) + 90.0f);
+
+        // modele charge : la 1re voiture le garde tel quel, les autres en sont des variantes
+        if (startNetwork != nullptr) {
+            car.nn = *startNetwork;
+            if (i > 0) {
+                car.nn.mutate(MUTATION_RATE, MUTATION_STRENGTH);
+            }
+        }
+
+        aiCars.push_back(car);
     }
 }
 
@@ -127,6 +146,14 @@ void TrainingState::nextGeneration() {
 
     bestScoreLastGeneration = aiCars[0].score;
     std::cout << "Generation " << generation << " : meilleur score " << aiCars[0].score << std::endl;
+
+    // sauvegarde : on garde le meilleur reseau rencontre, pour ne jamais remplacer le modele par un moins bon
+    if (!bestNetwork || aiCars[0].score > bestScoreEver) {
+        bestNetwork = aiCars[0].nn;
+        bestScoreEver = aiCars[0].score;
+    }
+    lastSaveFailed = !saveModel(modelName, *bestNetwork, generation);
+
     generation++;
 
     // remplace l'ancienne population par la nouvelle

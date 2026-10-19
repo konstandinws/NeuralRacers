@@ -9,6 +9,7 @@ enum class Align { Center, Start };
 struct StackProps {
     float spacing = 10.0f;        // espace entre deux enfants
     Align align = Align::Center;  // placement sur l'autre axe : centre, ou en haut / a gauche
+    float minWidth = 0.0f;        // evite que la mise en page bouge quand le contenu change de largeur
 };
 
 using ColumnProps = StackProps;
