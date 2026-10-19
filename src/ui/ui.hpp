@@ -7,6 +7,8 @@
 #include "ui/scrollView.hpp"
 #include "ui/textInput.hpp"
 #include "ui/modal.hpp"
+#include "ui/stepper.hpp"
+#include "ui/root.hpp"
 
 // fonctions de creation pour decrire l'interface comme un arbre, a la maniere du JSX :
 //
@@ -56,6 +58,10 @@ inline ComponentPtr scrollView(ScrollViewProps props, ComponentPtr content) {
 
 inline ComponentPtr modal(ModalProps props, ComponentPtr content) {
     return std::make_unique<Modal>(props, std::move(content));
+}
+
+inline ComponentPtr stepper(StepperProps props) {
+    return std::make_unique<Stepper>(std::move(props));
 }
 
 }

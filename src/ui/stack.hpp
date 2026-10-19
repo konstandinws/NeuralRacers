@@ -4,8 +4,11 @@
 
 namespace ui {
 
+enum class Align { Center, Start };
+
 struct StackProps {
-    float spacing = 10.0f;  // espace entre deux enfants
+    float spacing = 10.0f;        // espace entre deux enfants
+    Align align = Align::Center;  // placement sur l'autre axe : centre, ou en haut / a gauche
 };
 
 using ColumnProps = StackProps;

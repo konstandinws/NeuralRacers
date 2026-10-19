@@ -4,9 +4,10 @@
 
 namespace ui {
 
-ScrollView::ScrollView(ScrollViewProps props, ComponentPtr content) : props(props), content(std::move(content)) {
-    bounds.width = props.size.x;
-    bounds.height = props.size.y;
+ScrollView::ScrollView(ScrollViewProps props, ComponentPtr content) : props(std::move(props)), content(std::move(content)) {
+    bounds.width = this->props.size.x;
+    bounds.height = this->props.size.y;
+    offset = Clamp(this->props.offset, 0.0f, maxOffset());
     layoutContent();
 }
 
@@ -29,9 +30,12 @@ void ScrollView::setPosition(Vector2 position) {
 void ScrollView::update(const Input& input) {
     bool mouseInside = CheckCollisionPointRec(input.mouse, bounds);
 
-    if (mouseInside) {
+    if (mouseInside && input.wheel != 0.0f) {
         offset = Clamp(offset - input.wheel * props.scrollSpeed, 0.0f, maxOffset());
         layoutContent();
+        if (props.onScroll) {
+            props.onScroll(offset);
+        }
     }
 
     // les elements caches hors de la zone visible ne doivent pas etre cliquables

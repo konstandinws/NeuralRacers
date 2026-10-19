@@ -27,13 +27,14 @@ Stack::Stack(Direction direction, StackProps props, std::vector<ComponentPtr> ch
 
 void Stack::layout() {
     float cursor = (direction == Direction::Vertical) ? bounds.y : bounds.x;
+    float centered = (props.align == Align::Center) ? 0.5f : 0.0f;
     for (ComponentPtr& child : children) {
         Rectangle childBounds = child->getBounds();
         if (direction == Direction::Vertical) {
-            child->setPosition({bounds.x + (bounds.width - childBounds.width) / 2.0f, cursor});
+            child->setPosition({bounds.x + (bounds.width - childBounds.width) * centered, cursor});
             cursor += childBounds.height + props.spacing;
         } else {
-            child->setPosition({cursor, bounds.y + (bounds.height - childBounds.height) / 2.0f});
+            child->setPosition({cursor, bounds.y + (bounds.height - childBounds.height) * centered});
             cursor += childBounds.width + props.spacing;
         }
     }

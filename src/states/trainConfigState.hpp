@@ -1,30 +1,33 @@
 #pragma once
-#include "core/state.hpp"
-#include "ai/aiCar.hpp"
+#include <string>
 #include <vector>
+#include "core/state.hpp"
+#include "ui/component.hpp"
+#include "ui/root.hpp"
 
+// ecran avant l'entrainement : choix du circuit et du nombre de voitures
 class TrainConfigState : public State
 {
 public:
+    TrainConfigState();
     bool isPausable() const override { return true; }
+    void onEnter(App* app) override;
     void update(App* app) override;
     void render(App* app) override;
-    void createAICars(int numCars);
-    void nextGeneration();
-    TrainConfigState();
 
 private:
-    std::vector<AICar> aiCars;
-    Track track;
-    Camera2D camera;
+    ui::ComponentPtr buildUI(App* app);
+    void selectTrack(int index);
 
-    // parametres de l'algorithme genetique
-    int POPULATION_SIZE = 50;
-    float ELITE_RATIO = 0.1f;        // part des meilleures voitures recopiees telles quelles
-    float PARENT_RATIO = 0.2f;       // part des meilleures voitures qui peuvent se reproduire
-    float MUTATION_RATE = 0.1f;      // probabilite de muter chaque poids
-    float MUTATION_STRENGTH = 0.3f;  // ecart-type du bruit gaussien
+    std::vector<std::string> trackFiles;
+    int selectedTrack = -1;
+    int selectedCheckpoints = 0;
+    int carCount = 50;
+    float listScroll = 0.0f;  // garde la position de la liste quand l'interface est reconstruite
 
-    int generation = 1;
-    float bestScoreLastGeneration = 0.0f;
+    ui::Root root;
+
+    static constexpr int MIN_CARS = 10;
+    static constexpr int MAX_CARS = 300;
+    static constexpr int CAR_STEP = 10;
 };

@@ -1,133 +1,104 @@
 #include "states/trainConfigState.hpp"
 #include "core/app.hpp"
-#include "raylib.h"
-#include "states/pauseState.hpp"
+#include "io/fileLoader.hpp"
 #include "io/trackSerializer.hpp"
-#include "core/random.hpp"
-#include <iostream>
+#include "states/mainMenuState.hpp"
+#include "states/trainingState.hpp"
+#include "ui/ui.hpp"
 #include <algorithm>
 
-TrainConfigState::TrainConfigState()
-{
-    track = loadTrack(TRACKS_DIR + "trackTest.txt");
+TrainConfigState::TrainConfigState() {
+    loadFilesNameFromFolder(TRACKS_DIR, trackFiles);
 
-    createAICars(POPULATION_SIZE);
-
-    camera = {0};
-    camera.zoom = 1.0f;
-    camera.offset = {0, 0};
-    camera.target = {0, 0};
-}
-
-void TrainConfigState::update(App* app)
-{
-    // control de la caméra
-    if(IsKeyDown(KEY_W)) {
-        camera.target.y -= 20; // Déplacer la caméra vers le haut
-    }
-    if(IsKeyDown(KEY_S)) {
-        camera.target.y += 20; // Déplacer la caméra vers le bas
-    }
-    if(IsKeyDown(KEY_A)) {
-        camera.target.x -= 20; // Déplacer la caméra vers la gauche
-    }
-    if(IsKeyDown(KEY_D)) {
-        camera.target.x += 20; // Déplacer la caméra vers la droite
-    }
-
-    if (IsKeyPressed(KEY_Q)) {
-        camera.zoom *= 1.1f; // Zoomer
-    }
-    if (IsKeyPressed(KEY_E)) {
-        camera.zoom /= 1.1f; // Dézoomer
-    }
-
-    bool allDead = true;
-
-    for(AICar& aiCar : aiCars) {
-        aiCar.updateAI(track);
-        // l'arrivee est geree par AICar::updateProgress (derniere porte)
-        if (track.checkWallCollision(aiCar)) {
-            aiCar.isDead = true;
-        }
-        if (!aiCar.isDead) {
-            allDead = false;
-        }
-    }
-
-    if (allDead) {
-        nextGeneration();
+    // circuit d'entrainement par defaut s'il existe, sinon le premier
+    auto it = std::find(trackFiles.begin(), trackFiles.end(), "trackTest.txt");
+    if (it != trackFiles.end()) {
+        selectTrack((int)(it - trackFiles.begin()));
+    } else if (!trackFiles.empty()) {
+        selectTrack(0);
     }
 }
 
-// LES FDP ILS ONT APPRIS A FAIRE DU SURPLACE
-
-void TrainConfigState::render(App* app)
-{
-    BeginMode2D(camera);
-    // lignes de collision pour le debug
-    app->renderer.drawTrack(&track);
-    app->renderer.drawAICars(aiCars);
-    
-    // fonction de debug pour visualiser les capteurs
-    for (AICar& aiCar : aiCars) {
-        if(!aiCar.isDead) {
-            aiCar.drawSensors();
-        }
-    }
-    
-    EndMode2D();
-
-    DrawText(TextFormat("Generation %d | Meilleur score precedent : %.0f", generation, bestScoreLastGeneration), 10, 10, 20, RAYWHITE);
+void TrainConfigState::onEnter(App* app) {
+    root.mount([this, app] { return buildUI(app); });
 }
 
-void TrainConfigState::createAICars(int numCars)
-{
-    for (int i = 0; i < numCars; ++i)
-    {
-        aiCars.emplace_back(AICar(track.start.x, track.start.y, (track.angleStart * RAD2DEG) + 90.0f));
-    }
+void TrainConfigState::selectTrack(int index) {
+    selectedTrack = index;
+    // on charge le circuit pour prevenir s'il n'a pas de checkpoints
+    selectedCheckpoints = (int)loadTrack(TRACKS_DIR + trackFiles[index]).checkpoints.size();
+    root.invalidate();
 }
 
-void TrainConfigState::nextGeneration() {
-    // classement de la generation precedente, du meilleur au moins bon
-    std::sort(aiCars.begin(), aiCars.end(), [](const AICar& a, const AICar& b) {
-        return a.score > b.score;
-    });
+ui::ComponentPtr TrainConfigState::buildUI(App* app) {
+    // liste des circuits, le circuit choisi est mis en evidence
+    ui::ScrollViewProps listProps = {
+        .size = {400, 420},
+        .offset = listScroll,
+        .onScroll = [this](float offset) { listScroll = offset; },
+    };
+    float buttonWidth = listProps.size.x - 2 * listProps.padding - 2 * ui::ScrollView::SCROLLBAR_WIDTH;
 
-    int populationSize = (int)aiCars.size();
-    int eliteCount = std::max(1, (int)(populationSize * ELITE_RATIO));
-    int parentCount = std::max(2, (int)(populationSize * PARENT_RATIO));
-
-    // Point de depart
-    float startX = track.start.x;
-    float startY = track.start.y;
-    float startAngle = (track.angleStart * RAD2DEG) + 90.0f;
-
-    std::vector<AICar> newPopulation;
-
-    for (int i = 0; i < populationSize; i++) {
-        // On crée une nouvelle voiture toute neuve sur la ligne de départ
-        AICar child(startX, startY, startAngle);
-
-        if (i < eliteCount) {
-            // les meilleures sont gardees sans modification pour ne jamais perdre la meilleure solution
-            child.nn = aiCars[i].nn;
-        } else {
-            // les autres sont des enfants de deux parents pris parmi les meilleures, puis mutes legerement
-            const AICar& parentA = aiCars[randomInt(0, parentCount - 1)];
-            const AICar& parentB = aiCars[randomInt(0, parentCount - 1)];
-            child.nn = NeuralNetwork::crossover(parentA.nn, parentB.nn);
-            child.nn.mutate(MUTATION_RATE, MUTATION_STRENGTH);
-        }
-
-        newPopulation.push_back(child);
+    std::vector<ui::ComponentPtr> trackButtons;
+    for (int i = 0; i < (int)trackFiles.size(); i++) {
+        trackButtons.push_back(ui::button({
+            .text = trackFiles[i],
+            .onClick = [this, i] { selectTrack(i); },
+            .size = {buttonWidth, 50},
+            .selected = i == selectedTrack,
+        }));
     }
 
-    bestScoreLastGeneration = aiCars[0].score;
-    std::cout << "Generation " << generation << " : meilleur score " << aiCars[0].score << std::endl;
-    generation++;
+    ui::ComponentPtr trackList = trackFiles.empty()
+        ? ui::label({.text = "Aucun circuit dans " + TRACKS_DIR, .color = ui::theme::accent})
+        : ui::scrollView(listProps, ui::columnOf({.spacing = 10}, std::move(trackButtons)));
 
-    // remplace l'ancienne population par la nouvelle
-    aiCars = newPopulation;
+    // sans checkpoints, la fitness retombe sur la distance a vol d'oiseau jusqu'a l'arrivee
+    bool noCheckpoints = selectedTrack >= 0 && selectedCheckpoints == 0;
+    std::string trackInfo = selectedTrack < 0 ? ""
+        : noCheckpoints ? "Pas de checkpoints : l'IA apprendra mal"
+        : std::to_string(selectedCheckpoints) + " checkpoints";
+
+    auto tree = ui::column({.spacing = 40},
+        ui::label({.text = "ENTRAINEMENT", .fontSize = 40}),
+        ui::row({.spacing = 80, .align = ui::Align::Start},
+            ui::column({.spacing = 15, .align = ui::Align::Start},
+                ui::label({.text = "Circuit", .fontSize = 24}),
+                std::move(trackList),
+                ui::label({.text = trackInfo, .fontSize = 18, .color = noCheckpoints ? ORANGE : ui::theme::border})
+            ),
+            ui::column({.spacing = 15, .align = ui::Align::Start},
+                ui::label({.text = "Nombre de voitures", .fontSize = 24}),
+                ui::stepper({
+                    .value = carCount,
+                    .min = MIN_CARS,
+                    .max = MAX_CARS,
+                    .step = CAR_STEP,
+                    .onChange = [this](int value) { carCount = value; },
+                })
+            )
+        ),
+        ui::row({.spacing = 20},
+            ui::button({.text = "RETOUR", .onClick = [app] { app->changeState(new MainMenuState()); }}),
+            ui::button({
+                .text = "LANCER",
+                .onClick = [this, app] {
+                    app->changeState(new TrainingState(TRACKS_DIR + trackFiles[selectedTrack], carCount));
+                },
+                .disabled = selectedTrack < 0,
+            })
+        )
+    );
+    ui::placeCentered(*tree, app->W / 2.0f, 40);
+    return tree;
+}
+
+void TrainConfigState::update(App* app) {
+    (void)app;
+    root.update(ui::Input::poll());
+}
+
+void TrainConfigState::render(App* app) {
+    (void)app;
+    root.draw();
 }

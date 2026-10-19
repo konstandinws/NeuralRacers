@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 #include "ui/component.hpp"
 #include "ui/theme.hpp"
 
@@ -10,6 +11,9 @@ struct ScrollViewProps {
     float scrollSpeed = 40.0f;  // pixels par cran de molette
     Color background = theme::surfaceDark;
     Color border = theme::border;
+    // defilement initial + callback : permet au parent de garder la position quand l'interface est reconstruite
+    float offset = 0.0f;
+    std::function<void(float)> onScroll;
 };
 
 // zone de taille fixe qui affiche une partie de son contenu et defile a la molette

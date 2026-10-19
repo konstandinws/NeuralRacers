@@ -21,6 +21,8 @@ struct ButtonProps {
     std::string text;
     std::function<void()> onClick;
     Vector2 size = {200, 50};
+    bool selected = false;   // mis en evidence (ex : element choisi dans une liste)
+    bool disabled = false;   // grise et non cliquable
     ButtonStyle style = {};
 };
 
