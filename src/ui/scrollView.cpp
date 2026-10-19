@@ -1,0 +1,60 @@
+#include "ui/scrollView.hpp"
+#include "raymath.h"
+#include <algorithm>
+
+namespace ui {
+
+ScrollView::ScrollView(ScrollViewProps props, ComponentPtr content) : props(props), content(std::move(content)) {
+    bounds.width = props.size.x;
+    bounds.height = props.size.y;
+    layoutContent();
+}
+
+float ScrollView::maxOffset() const {
+    float contentHeight = content->getBounds().height + 2.0f * props.padding;
+    return std::max(0.0f, contentHeight - bounds.height);
+}
+
+void ScrollView::layoutContent() {
+    // contenu centre horizontalement, decale vers le haut selon le defilement
+    float contentWidth = content->getBounds().width;
+    content->setPosition({bounds.x + (bounds.width - contentWidth) / 2.0f, bounds.y + props.padding - offset});
+}
+
+void ScrollView::setPosition(Vector2 position) {
+    Component::setPosition(position);
+    layoutContent();
+}
+
+void ScrollView::update(const Input& input) {
+    bool mouseInside = CheckCollisionPointRec(input.mouse, bounds);
+
+    if (mouseInside) {
+        offset = Clamp(offset - input.wheel * props.scrollSpeed, 0.0f, maxOffset());
+        layoutContent();
+    }
+
+    // les elements caches hors de la zone visible ne doivent pas etre cliquables
+    content->update(mouseInside ? input : input.withoutMouse());
+}
+
+void ScrollView::draw() const {
+    DrawRectangleRec(bounds, props.background);
+
+    // on ne dessine que ce qui est dans la zone visible
+    BeginScissorMode((int)bounds.x, (int)bounds.y, (int)bounds.width, (int)bounds.height);
+    content->draw();
+    EndScissorMode();
+
+    DrawRectangleLinesEx(bounds, 2.0f, props.border);
+
+    // barre de defilement, seulement si le contenu depasse
+    float max = maxOffset();
+    if (max > 0.0f) {
+        float thumbHeight = bounds.height * bounds.height / (bounds.height + max);
+        float thumbY = bounds.y + (bounds.height - thumbHeight) * (offset / max);
+        DrawRectangleRec({bounds.x + bounds.width - SCROLLBAR_WIDTH - 2.0f, thumbY, SCROLLBAR_WIDTH, thumbHeight}, props.border);
+    }
+}
+
+}

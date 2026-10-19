@@ -18,7 +18,7 @@ DEPS    = $(OBJECTS:.o=.d)
 # Options de compilation
 # -MMD -MP : genere les dependances vers les .hpp pour ne recompiler que ce qui a change
 CXX      = g++
-CXXFLAGS = -std=c++17 -Wall -Wextra -MMD -MP -I$(SRC_DIR) -isystem external/raygui
+CXXFLAGS = -std=c++20 -Wall -Wextra -MMD -MP -I$(SRC_DIR)
 
 # Configuration par systeme (raylib, librairies, commandes)
 ifeq ($(OS),Windows_NT)

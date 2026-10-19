@@ -8,7 +8,7 @@ Jeu de course 2D en C++ avec [raylib](https://www.raylib.com/), où des voitures
 
 ## Compilation
 
-Prérequis : un compilateur C++17 et raylib.
+Prérequis : un compilateur C++20 et raylib. Aucune autre dépendance : l'interface (boutons, listes) est faite maison dans `src/ui/`.
 
 ```bash
 # macOS
@@ -51,7 +51,7 @@ src/
   ai/        voiture IA (capteurs, fitness), réseau de neurones
   editor/    éditeur de circuit
   io/        lecture/écriture des circuits, listing des fichiers
-external/    bibliothèques tierces (raygui)
+  ui/        composants d'interface réutilisables (bouton, texte, colonne, liste défilante)
 assets/      circuits (.txt)
 docs/        notes et TODO
 ```

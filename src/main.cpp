@@ -1,8 +1,6 @@
 #include <vector>
 #include <iostream>
 #include "raylib.h"
-#define RAYGUI_IMPLEMENTATION
-#include "raygui.h"
 #include "game/car.hpp"
 #include "game/track.hpp"
 #include "editor/trackEditor.hpp"

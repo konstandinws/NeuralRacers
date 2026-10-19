@@ -1,7 +1,6 @@
 #include "states/trainConfigState.hpp"
 #include "core/app.hpp"
 #include "raylib.h"
-#include "raygui.h"
 #include "states/pauseState.hpp"
 #include "io/trackSerializer.hpp"
 #include "core/random.hpp"

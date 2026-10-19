@@ -46,6 +46,7 @@ void App::changeState(State* state) {
 
 void App::doPush(State* state) {
     stateStack.push_back(state);
+    state->onEnter(this);
 }
 
 void App::doPop() {

@@ -1,6 +1,5 @@
 #include "states/trackEditorState.hpp"
 #include "core/app.hpp"
-#include "raygui.h"
 #include "raymath.h"
 #include "editor/trackEditor.hpp"
 #include "io/trackSerializer.hpp"

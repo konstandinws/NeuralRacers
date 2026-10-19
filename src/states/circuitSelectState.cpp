@@ -1,57 +1,47 @@
 #include "states/circuitSelectState.hpp"
 #include "core/app.hpp"
 #include "raylib.h"
-#include "raygui.h"
-#include "states/pauseState.hpp"
+#include "ui/ui.hpp"
 #include "io/fileLoader.hpp"
 #include "states/mainMenuState.hpp"
-#include <iostream>
 #include "states/playState.hpp"
 #include "io/trackSerializer.hpp"
 
 CircuitSelectState::CircuitSelectState() {
-    scrollOffset = { 0, 0 }; 
-    
     loadFilesNameFromFolder(TRACKS_DIR, trackFiles);
 }
 
+void CircuitSelectState::onEnter(App* app)
+{
+    ui::ScrollViewProps listProps = {.size = {400, 500}};
+    float buttonWidth = listProps.size.x - 2 * listProps.padding - 2 * ui::ScrollView::SCROLLBAR_WIDTH;
+
+    // un bouton par circuit trouve dans le dossier
+    std::vector<ui::ComponentPtr> trackButtons;
+    for (const std::string& file : trackFiles) {
+        trackButtons.push_back(ui::button({
+            .text = file,
+            .onClick = [app, file] { app->changeState(new PlayState(TRACKS_DIR + file)); },
+            .size = {buttonWidth, 50},
+        }));
+    }
+
+    root = ui::column({.spacing = 40},
+        ui::label({.text = "SELECT YOUR CIRCUIT", .fontSize = 40}),
+        ui::scrollView(listProps, ui::columnOf({.spacing = 10}, std::move(trackButtons))),
+        ui::button({.text = "RETOUR", .onClick = [app] { app->changeState(new MainMenuState()); }})
+    );
+    ui::placeCentered(*root, app->W / 2.0f, 50);
+}
 
 void CircuitSelectState::update(App* app)
 {
-
+    (void)app;
+    root->update(ui::Input::poll());
 }
 
 void CircuitSelectState::render(App* app)
 {
-    DrawText("SELECT YOUR CIRCUIT", 400, 50, 40, RAYWHITE);
-
-    Rectangle panelBounds = { 400, 150, 400, 500 }; 
-    
-    float buttonHeight = 50.0f;
-    float spacing = 10.0f;
-    
-    float totalContentHeight = trackFiles.size() * (buttonHeight + spacing);
-    Rectangle contentBounds = { 0, 0, panelBounds.width - 20, totalContentHeight };
-    
-    Rectangle view; 
-
-    GuiScrollPanel(panelBounds, NULL, contentBounds, &scrollOffset, &view);
-
-    BeginScissorMode(view.x, view.y, view.width, view.height);
-
-    for (size_t i = 0; i < trackFiles.size(); ++i) {
-        float btnY = panelBounds.y + (i * (buttonHeight + spacing)) + scrollOffset.y;
-        
-        Rectangle btnBounds = { panelBounds.x + 10, btnY, view.width - 20, buttonHeight };
-
-        if (GuiButton(btnBounds, trackFiles[i].c_str())) {
-            app->changeState(new PlayState(TRACKS_DIR + trackFiles[i]));
-        }
-    }
-
-    EndScissorMode();
-
-    if (GuiButton(Rectangle{400, 680, 200, 50}, "RETOUR")) {
-        app->changeState(new MainMenuState());
-    }
-}   
+    (void)app;
+    root->draw();
+}

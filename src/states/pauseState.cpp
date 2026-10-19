@@ -2,32 +2,30 @@
 #include "states/mainMenuState.hpp"
 #include "core/app.hpp"
 #include "raylib.h"
-#include "raygui.h"
+#include "ui/ui.hpp"
+
+void PauseState::onEnter(App* app) {
+    root = ui::column({.spacing = 90},
+        ui::label({.text = "PAUSE", .fontSize = 60}),
+        ui::column({.spacing = 30},
+            ui::button({.text = "REPRENDRE",      .onClick = [app] { app->popState(); }}),
+            ui::button({.text = "MENU PRINCIPAL", .onClick = [app] { app->clearAndPush(new MainMenuState()); }}),
+            ui::button({.text = "QUITTER LE JEU", .onClick = [app] { app->quit(); }})
+        )
+    );
+    ui::placeCentered(*root, app->W / 2.0f, 150);
+}
 
 void PauseState::update(App* app) {
     if (IsKeyPressed(KEY_ESCAPE)) {
-        app->popState(); 
-        return; 
+        app->popState();
+        return;
     }
+
+    root->update(ui::Input::poll());
 }
 
 void PauseState::render(App* app) {
-    DrawText("PAUSE", 1200 / 2 - MeasureText("PAUSE", 60) / 2, 150, 60, RAYWHITE);
-
-    int btnWidth = 200;
-    int btnHeight = 50;
-    int startX = 1200 / 2 - btnWidth / 2; 
-
-
-    if (GuiButton(Rectangle{(float)startX, 300, (float)btnWidth, (float)btnHeight}, "REPRENDRE")) {
-        app->popState();
-    }
-
-    if (GuiButton(Rectangle{(float)startX, 380, (float)btnWidth, (float)btnHeight}, "MENU PRINCIPAL")) {
-        app->clearAndPush(new MainMenuState());
-    }
-
-    if (GuiButton(Rectangle{(float)startX, 460, (float)btnWidth, (float)btnHeight}, "QUITTER LE JEU")) {
-        app->quit();
-    }
+    (void)app;
+    root->draw();
 }
