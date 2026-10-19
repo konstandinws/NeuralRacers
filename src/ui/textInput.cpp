@@ -5,11 +5,25 @@ namespace ui {
 
 TextInput::TextInput(TextInputProps props) : props(std::move(props)) {
     text = this->props.value;
+    focused = this->props.autoFocus;
     bounds.width = this->props.size.x;
     bounds.height = this->props.size.y;
 }
 
 void TextInput::update(const Input& input) {
+    // un clic donne ou retire le focus selon qu'il est sur le champ ou non
+    if (input.mousePressed) {
+        bool wasFocused = focused;
+        focused = CheckCollisionPointRec(input.mouse, bounds);
+        if (wasFocused && !focused && props.onBlur) {
+            props.onBlur();
+        }
+    }
+
+    if (!focused) {
+        return;
+    }
+
     bool changed = false;
 
     for (int c : input.typed) {
@@ -36,10 +50,11 @@ void TextInput::update(const Input& input) {
 
 void TextInput::draw() const {
     DrawRectangleRec(bounds, theme::surfaceDark);
-    DrawRectangleLinesEx(bounds, 2.0f, theme::accent);
+    DrawRectangleLinesEx(bounds, 2.0f, focused ? theme::accent : theme::border);
 
     float padding = 12.0f;
-    int textX = (int)(bounds.x + padding);
+    int textWidth = MeasureText(text.c_str(), props.fontSize);
+    int textX = props.centerText ? (int)(bounds.x + (bounds.width - textWidth) / 2.0f) : (int)(bounds.x + padding);
     int textY = (int)(bounds.y + (bounds.height - props.fontSize) / 2.0f);
 
     if (text.empty()) {
@@ -49,10 +64,9 @@ void TextInput::draw() const {
         DrawText(text.c_str(), textX, textY, props.fontSize, theme::text);
     }
 
-    // curseur qui clignote apres le texte
-    if (std::fmod(GetTime(), 1.0) < 0.5) {
-        int caretX = textX + MeasureText(text.c_str(), props.fontSize) + 2;
-        DrawRectangle(caretX, textY, 2, props.fontSize, theme::text);
+    // curseur qui clignote apres le texte, seulement sur le champ actif
+    if (focused && std::fmod(GetTime(), 1.0) < 0.5) {
+        DrawRectangle(textX + textWidth + 2, textY, 2, props.fontSize, theme::text);
     }
 }
 

@@ -161,6 +161,7 @@ void TrackEditorState::buildSavePopup() {
             .onChange = [this](const std::string& value) { trackName = value; },
             .onSubmit = [this] { confirmSave(); },
             .filter = fileNameCharFilter,
+            .autoFocus = true,
         }),
         ui::label({
             .text = hasError ? saveError : "Laisser vide pour : " + defaultName,

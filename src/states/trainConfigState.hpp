@@ -42,7 +42,6 @@ private:
 
     ui::Root root;
 
-    static constexpr int MIN_CARS = 10;
+    static constexpr int MIN_CARS = 2;   // l'algorithme genetique a besoin de 2 parents
     static constexpr int MAX_CARS = 300;
-    static constexpr int CAR_STEP = 10;
 };

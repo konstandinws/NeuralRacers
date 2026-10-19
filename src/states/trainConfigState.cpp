@@ -155,8 +155,13 @@ ui::ComponentPtr TrainConfigState::buildUI(App* app) {
                     .value = carCount,
                     .min = MIN_CARS,
                     .max = MAX_CARS,
-                    .step = CAR_STEP,
+                    .steps = {10, 1},
                     .onChange = [this](int value) { carCount = value; },
+                }),
+                ui::label({
+                    .text = "Entre " + std::to_string(MIN_CARS) + " et " + std::to_string(MAX_CARS),
+                    .fontSize = 18,
+                    .color = ui::theme::border,
                 })
             )
         ),
