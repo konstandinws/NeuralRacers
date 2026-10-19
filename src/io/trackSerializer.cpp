@@ -1,11 +1,43 @@
 #include "io/trackSerializer.hpp"
 #include <string>
+#include <filesystem>
+#include <algorithm>
 
-void saveTrack(const Track& track) {
+static const std::string DEFAULT_TRACK_PREFIX = "nouveau_circuit_";
+
+static std::string trackPath(const std::string& name) {
+    return TRACKS_DIR + name + ".txt";
+}
+
+bool trackExists(const std::string& name) {
+    return std::filesystem::exists(trackPath(name));
+}
+
+std::string nextDefaultTrackName() {
+    int highest = 0;
+    if (std::filesystem::exists(TRACKS_DIR)) {
+        for (const auto& entry : std::filesystem::directory_iterator(TRACKS_DIR)) {
+            std::string stem = entry.path().stem().string();
+            if (entry.path().extension() != ".txt" || stem.rfind(DEFAULT_TRACK_PREFIX, 0) != 0) {
+                continue;
+            }
+            std::string number = stem.substr(DEFAULT_TRACK_PREFIX.size());
+            if (!number.empty() && std::all_of(number.begin(), number.end(), ::isdigit)) {
+                highest = std::max(highest, std::stoi(number));
+            }
+        }
+    }
+    return DEFAULT_TRACK_PREFIX + std::to_string(highest + 1);
+}
+
+bool saveTrack(const Track& track, const std::string& name) {
 
     // j'ai enlever le if isFinished() car on peut pas enregister un track qui n'est pas fini
 
-    std::fstream file(TRACKS_DIR + "NewTrack.txt", std::ios::out);
+    std::fstream file(trackPath(name), std::ios::out);
+    if (!file.is_open()) {
+        return false;
+    }
 
     file << "S " << track.start.x << "," << track.start.y << std::endl;
     file << "A " << track.angleStart << std::endl;
@@ -24,6 +56,7 @@ void saveTrack(const Track& track) {
     file << "<EOF>";
 
     file.close();
+    return !file.fail();
 }
 
 Track loadTrack(const std::string& filename) {
