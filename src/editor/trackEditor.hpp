@@ -20,16 +20,10 @@ struct TrackEditor {
     std::vector<Line> checkpoints{};
     std::optional<Point> pendingCheckpoint; // premier point du checkpoint en cours
 
-    // utiliser des smarts_pointers pour eviter le destructeur
-    Point* start = nullptr;
-    Line* finish = nullptr;
-    float* angleStart = nullptr;
-
-    ~TrackEditor() {
-        delete start;
-        delete finish;
-        delete angleStart;
-    }
+    // empty until placed: no raw pointers, so no destructor and copying is safe (rule of zero)
+    std::optional<Point> start;
+    std::optional<Line> finish;
+    std::optional<float> angleStart;  // radians
 
 
     void handleClick(const Camera2D& camera);

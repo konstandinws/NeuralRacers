@@ -48,7 +48,7 @@ void TrackEditor::handleClick(const Camera2D& camera)
         }
         std::cout << "\n";
 
-        if(start != nullptr) {
+        if(start) {
             std::cout << "Start : (" << start->x << ", " << start->y << ")\n";
         }
 
@@ -59,7 +59,7 @@ void TrackEditor::handleClick(const Camera2D& camera)
         }
         std::cout << "\n";
 
-        if(angleStart != nullptr) {
+        if(angleStart) {
             std::cout << "Angle Start : " << *angleStart << "\n";
         }
     }
@@ -67,23 +67,23 @@ void TrackEditor::handleClick(const Camera2D& camera)
 
 void TrackEditor::placeStart(const Camera2D& camera)
 {
-    if(start == nullptr && isComplete) {
+    if(!start && isComplete) {
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
             Vector2 mousePos = GetScreenToWorld2D(GetMousePosition(), camera);
-            start = new Point{mousePos.x, mousePos.y};
+            start = Point{mousePos.x, mousePos.y};
         }
     }
 }
 
 void TrackEditor::placeAngleStart(const Camera2D& camera)
 {
-    if(angleStart == nullptr && start != nullptr) {
+    if(!angleStart && start) {
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
             Vector2 mousePos = GetScreenToWorld2D(GetMousePosition(), camera);
             float angle = atan2(mousePos.y - start->y, mousePos.x - start->x);
-            angleStart = new float(angle);
+            angleStart = angle;
         }
     }
 }
@@ -91,13 +91,13 @@ void TrackEditor::placeAngleStart(const Camera2D& camera)
 void TrackEditor::placeFinish(const Camera2D& camera)
 {
     // isComplete pour etre sur, on verifie deja avant
-    if(finish == nullptr && finishLine.size() < 2 && isComplete) {
+    if(!finish && finishLine.size() < 2 && isComplete) {
          if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
             Vector2 mousePos = GetScreenToWorld2D(GetMousePosition(), camera);
             finishLine.push_back(Point{mousePos.x, mousePos.y});
             if(finishLine.size() == 2) {
-                finish = new Line{finishLine[0], finishLine[1]};
+                finish = Line{finishLine[0], finishLine[1]};
             }
         }
     }
@@ -112,14 +112,10 @@ void TrackEditor::clear()
     }
     isComplete = false;
 
-    // degueulasse car j'utilise les pointeurs bruts
-    delete start;
-    start = nullptr;
-    delete finish;
-    finish = nullptr;
+    start.reset();
+    finish.reset();
     finishLine.clear();
-    delete angleStart;
-    angleStart = nullptr;
+    angleStart.reset();
 
     checkpoints.clear();
     pendingCheckpoint.reset();
@@ -157,7 +153,7 @@ Track TrackEditor::saveTrack()
 }
 
 bool TrackEditor::isFinished() {
-    if(isComplete && start != nullptr && finish != nullptr) {
+    if(isComplete && start && angleStart && finish) {
         return true;
     }
     return false;
@@ -175,11 +171,11 @@ void TrackEditor::draw()
         DrawLine(l.a.x, l.a.y, l.b.x, l.b.y, GREEN);
     }
 
-    if(start != nullptr) {
+    if(start) {
         DrawCircle(start->x, start->y, 7, BLUE);
     }
 
-    if(finish != nullptr) {
+    if(finish) {
         DrawLine(finish->a.x, finish->a.y, finish->b.x, finish->b.y, RED);
     }
 

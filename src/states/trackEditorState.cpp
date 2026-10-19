@@ -94,11 +94,11 @@ void TrackEditorState::updateEditor(bool mouseAllowed) {
     }
 
     if(editor.isComplete) {
-        if(editor.start == nullptr) {
+        if(!editor.start) {
             editor.placeStart(camera);
-        } else if(editor.angleStart == nullptr && editor.start != nullptr) {
+        } else if(!editor.angleStart) {
             editor.placeAngleStart(camera);
-        } else if(editor.finish == nullptr) {
+        } else if(!editor.finish) {
             editor.placeFinish(camera);
         } else {
             editor.placeCheckpoint(camera);
@@ -183,17 +183,17 @@ void TrackEditorState::showMessage(const std::string& text, Color color) {
 
 void TrackEditorState::render(App* app) {
     DrawText("Track Editor - WASD to move, Q/E to zoom, SPACE to clear, G to save", 10, 10, 20, RAYWHITE);
-    if (editor.finish != nullptr) {
+    if (editor.finish) {
         DrawText("Checkpoints: 2 clicks each, in driving order - BACKSPACE to undo", 10, 35, 20, SKYBLUE);
     }
     BeginMode2D(camera);
 
     // mettre cela dans le renderer (flemme pour l'instant)
     editor.draw();
-    if(editor.angleStart == nullptr && editor.start != nullptr) {
+    if(!editor.angleStart && editor.start) {
         DrawLine(editor.start->x, editor.start->y, GetScreenToWorld2D(GetMousePosition(), camera).x, GetScreenToWorld2D(GetMousePosition(), camera).y, BLUE);
     }
-    if(editor.angleStart != nullptr) {
+    if(editor.angleStart) {
         DrawLine(editor.start->x, editor.start->y, editor.start->x + cos(*editor.angleStart) * 50, editor.start->y + sin(*editor.angleStart) * 50, BLUE);
     }
     if(editor.pendingCheckpoint) {

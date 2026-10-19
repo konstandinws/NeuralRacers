@@ -9,7 +9,7 @@ void PauseState::onEnter(App* app) {
         ui::label({.text = "PAUSE", .fontSize = 60}),
         ui::column({.spacing = 30},
             ui::button({.text = "REPRENDRE",      .onClick = [app] { app->popState(); }}),
-            ui::button({.text = "MENU PRINCIPAL", .onClick = [app] { app->clearAndPush(new MainMenuState()); }}),
+            ui::button({.text = "MENU PRINCIPAL", .onClick = [app] { app->clearAndPush(std::make_unique<MainMenuState>()); }}),
             ui::button({.text = "QUITTER LE JEU", .onClick = [app] { app->quit(); }})
         )
     );

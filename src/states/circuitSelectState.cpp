@@ -21,7 +21,7 @@ void CircuitSelectState::onEnter(App* app)
     for (const std::string& file : trackFiles) {
         trackButtons.push_back(ui::button({
             .text = file,
-            .onClick = [app, file] { app->changeState(new PlayState(TRACKS_DIR + file)); },
+            .onClick = [app, file] { app->changeState(std::make_unique<PlayState>(TRACKS_DIR + file)); },
             .size = {buttonWidth, 50},
         }));
     }
@@ -29,7 +29,7 @@ void CircuitSelectState::onEnter(App* app)
     root = ui::column({.spacing = 40},
         ui::label({.text = "SELECT YOUR CIRCUIT", .fontSize = 40}),
         ui::scrollView(listProps, ui::columnOf({.spacing = 10}, std::move(trackButtons))),
-        ui::button({.text = "RETOUR", .onClick = [app] { app->changeState(new MainMenuState()); }})
+        ui::button({.text = "RETOUR", .onClick = [app] { app->changeState(std::make_unique<MainMenuState>()); }})
     );
     ui::placeCentered(*root, app->W / 2.0f, 50);
 }

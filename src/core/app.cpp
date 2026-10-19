@@ -10,58 +10,67 @@ App::App() : running(true) {
     Renderer renderer;
 
 
-    doPush(new MainMenuState());
+    doPush(std::make_unique<MainMenuState>());
 }
 
 App::~App() {
-    // applique les actions restantes pour ne pas perdre (leak) les etats deja crees
-    applyPendingActions();
-    while (!stateStack.empty()) doPop();
+    // the states are destroyed automatically, before the window (they may still use raylib resources)
+    pendingActions.clear();
+    stateStack.clear();
     CloseWindow();
 }
 
-// les fonctions publiques ne modifient pas la pile directement, elles mettent l'action en attente
+// the public functions do not touch the stack directly, they queue the change
 
-void App::pushState(State* state) {
-    pendingActions.push_back([this, state]() { doPush(state); });
+void App::pushState(std::unique_ptr<State> state) {
+    pendingActions.push_back({PendingAction::Type::Push, std::move(state)});
 }
 
 void App::popState() {
-    pendingActions.push_back([this]() { doPop(); });
+    pendingActions.push_back({PendingAction::Type::Pop, nullptr});
 }
 
-void App::clearAndPush(State* state) {
-    pendingActions.push_back([this, state]() {
-        while (!stateStack.empty()) doPop();
-        doPush(state);
-    });
+void App::clearAndPush(std::unique_ptr<State> state) {
+    pendingActions.push_back({PendingAction::Type::ClearAndPush, std::move(state)});
 }
 
-void App::changeState(State* state) {
-    pendingActions.push_back([this, state]() {
-        doPop();
-        doPush(state);
-    });
+void App::changeState(std::unique_ptr<State> state) {
+    pendingActions.push_back({PendingAction::Type::Change, std::move(state)});
 }
 
-void App::doPush(State* state) {
-    stateStack.push_back(state);
-    state->onEnter(this);
+void App::doPush(std::unique_ptr<State> state) {
+    stateStack.push_back(std::move(state));
+    stateStack.back()->onEnter(this);
 }
 
 void App::doPop() {
     if (!stateStack.empty()) {
-        delete stateStack.back();
         stateStack.pop_back();
     }
 }
 
 void App::applyPendingActions() {
-    // on deplace la liste avant de l'executer au cas ou une action en ajoute une autre
-    std::vector<std::function<void()>> actions = std::move(pendingActions);
+    // move the queue out first, in case an action (e.g. onEnter) queues another one
+    std::vector<PendingAction> actions = std::move(pendingActions);
     pendingActions.clear();
-    for (auto& action : actions) {
-        action();
+
+    for (PendingAction& action : actions) {
+        switch (action.type) {
+            case PendingAction::Type::Push:
+                doPush(std::move(action.state));
+                break;
+            case PendingAction::Type::Pop:
+                doPop();
+                break;
+            case PendingAction::Type::Change:
+                doPop();
+                doPush(std::move(action.state));
+                break;
+            case PendingAction::Type::ClearAndPush:
+                stateStack.clear();
+                doPush(std::move(action.state));
+                break;
+        }
     }
 }
 
@@ -73,7 +82,7 @@ void App::run() {
         ClearBackground(BLACK);
         if (!stateStack.empty()) {
             if (stateStack.back()->isPausable() && IsKeyPressed(KEY_ESCAPE)) {
-                pushState(new PauseState());
+                pushState(std::make_unique<PauseState>());
             } else {
                 stateStack.back()->update(this);
                 stateStack.back()->render(this);

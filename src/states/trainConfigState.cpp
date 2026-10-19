@@ -88,7 +88,7 @@ void TrainConfigState::launch(App* app) {
         config.startModel = selectedModelData;
     }
 
-    app->changeState(new TrainingState(config));
+    app->changeState(std::make_unique<TrainingState>(config));
 }
 
 ui::ComponentPtr TrainConfigState::selectList(const std::vector<std::string>& labels, int selected, std::function<void(int)> onSelect, float* scroll) {
@@ -182,7 +182,7 @@ ui::ComponentPtr TrainConfigState::buildUI(App* app) {
             )
         ),
         ui::row({.spacing = 20},
-            ui::button({.text = "RETOUR", .onClick = [app] { app->changeState(new MainMenuState()); }}),
+            ui::button({.text = "RETOUR", .onClick = [app] { app->changeState(std::make_unique<MainMenuState>()); }}),
             ui::button({.text = "LANCER", .onClick = [this, app] { launch(app); }, .disabled = !canLaunch})
         )
     );
