@@ -4,13 +4,15 @@
 #include "raygui.h"
 #include "pauseState.hpp"
 #include "trackSerializer.hpp"
+#include "random.hpp"
 #include <iostream>
+#include <algorithm>
 
 TrainConfigState::TrainConfigState()
 {
     track = loadTrack("Tracks/trackTest.txt");
 
-    createAICars(20);
+    createAICars(POPULATION_SIZE);
 
     camera = {0};
     camera.zoom = 1.0f;
@@ -76,7 +78,8 @@ void TrainConfigState::render(App* app)
     }
     
     EndMode2D();
-    
+
+    DrawText(TextFormat("Generation %d | Meilleur score precedent : %.0f", generation, bestScoreLastGeneration), 10, 10, 20, RAYWHITE);
 }
 
 void TrainConfigState::createAICars(int numCars)
@@ -88,38 +91,44 @@ void TrainConfigState::createAICars(int numCars)
 }
 
 void TrainConfigState::nextGeneration() {
-    // meilleure voiture de la génération précédente
-    AICar bestCar = aiCars[0];
-    for (const AICar& car : aiCars) {
-        if (car.score > bestCar.score) {
-            bestCar = car;
-        }
-    }
+    // classement de la generation precedente, du meilleur au moins bon
+    std::sort(aiCars.begin(), aiCars.end(), [](const AICar& a, const AICar& b) {
+        return a.score > b.score;
+    });
+
+    int populationSize = (int)aiCars.size();
+    int eliteCount = std::max(1, (int)(populationSize * ELITE_RATIO));
+    int parentCount = std::max(2, (int)(populationSize * PARENT_RATIO));
 
     // Point de depart
     float startX = track.start.x;
     float startY = track.start.y;
     float startAngle = (track.angleStart * RAD2DEG) + 90.0f;
-    
-    std::vector<AICar> newPopulation;
-    
-    for (int i = 0; i < aiCars.size(); i++) {
-        // On crée une nouvelle voiture toute neuve sur la ligne de départ
-        AICar clone(startX, startY, startAngle);
-        
-        // on clone la meilleure voiture de la génération précédente
-        clone.nn = bestCar.nn; 
 
-        // 100% de chances de muter chaque neurone sauf permier
-        if (i > 0) {
-            clone.nn.mutate(1.0f); 
+    std::vector<AICar> newPopulation;
+
+    for (int i = 0; i < populationSize; i++) {
+        // On crée une nouvelle voiture toute neuve sur la ligne de départ
+        AICar child(startX, startY, startAngle);
+
+        if (i < eliteCount) {
+            // les meilleures sont gardees sans modification pour ne jamais perdre la meilleure solution
+            child.nn = aiCars[i].nn;
+        } else {
+            // les autres sont des enfants de deux parents pris parmi les meilleures, puis mutes legerement
+            const AICar& parentA = aiCars[randomInt(0, parentCount - 1)];
+            const AICar& parentB = aiCars[randomInt(0, parentCount - 1)];
+            child.nn = NeuralNetwork::crossover(parentA.nn, parentB.nn);
+            child.nn.mutate(MUTATION_RATE, MUTATION_STRENGTH);
         }
 
-        newPopulation.push_back(clone);
+        newPopulation.push_back(child);
     }
+
+    bestScoreLastGeneration = aiCars[0].score;
+    std::cout << "Generation " << generation << " : meilleur score " << aiCars[0].score << std::endl;
+    generation++;
 
     // remplace l'ancienne population par la nouvelle
     aiCars = newPopulation;
-    
-    std::cout << "Nouvelle génération créée avec un score de champion de : " << bestCar.score << std::endl;
 }

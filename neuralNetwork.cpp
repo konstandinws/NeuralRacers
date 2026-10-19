@@ -1,5 +1,6 @@
 #include "neuralNetwork.hpp"
-#include <algorithm> 
+#include <algorithm>
+#include "random.hpp"
 
 // init d'une chouche
 Layer::Layer(int numInputs, int numNeurons) {
@@ -13,10 +14,10 @@ Layer::Layer(int numInputs, int numNeurons) {
     // on met des valeurs au hasard pour les poids et les biais 
     for (int i = 0; i < numNeurons; i++) {
         // Un nombre au hasard entre -1 et 1
-        biases[i] = ((float)rand() / RAND_MAX) * 2.0f - 1.0f; 
-        
+        biases[i] = randomFloat(-1.0f, 1.0f);
+
         for (int j = 0; j < numInputs; j++) {
-            weights[i][j] = ((float)rand() / RAND_MAX) * 2.0f - 1.0f;
+            weights[i][j] = randomFloat(-1.0f, 1.0f);
         }
     }
 }
@@ -56,24 +57,47 @@ std::vector<float> NeuralNetwork::feedForward(const std::vector<float>& inputs) 
     return currentInputs; // Renvoie les 2 valeurs finales (volant et pédales)
 }
 
-void NeuralNetwork::mutate(float mutationRate) {
+void NeuralNetwork::mutate(float mutationRate, float mutationStrength) {
+    // bruit gaussien : la plupart des mutations sont petites, quelques-unes plus grandes
+    std::normal_distribution<float> noise(0.0f, mutationStrength);
+
     for (Layer& layer : layers) {
         for (int i = 0; i < layer.numNeurons; i++) {
-            
-            // Muter le biais -0.5 à 0.5
-            if (((float)rand() / RAND_MAX) < mutationRate) {
-                layer.biases[i] += (((float)rand() / RAND_MAX) * 2.0f - 1.0f) * 0.5f; 
+
+            // 1. Muter le biais
+            if (randomFloat(0.0f, 1.0f) < mutationRate) {
+                layer.biases[i] += noise(rng());
 
                 layer.biases[i] = std::clamp(layer.biases[i], -2.0f, 2.0f); // clamp les biais pour eviter les valeurs extrêmes
-            } 
+            }
 
             // 2. Muter les poids
             for (int j = 0; j < layer.numInputsPerNeuron; j++) {
-                if (((float)rand() / RAND_MAX) < mutationRate) {
-                    layer.weights[i][j] += (((float)rand() / RAND_MAX) * 2.0f - 1.0f) * 0.5f;
+                if (randomFloat(0.0f, 1.0f) < mutationRate) {
+                    layer.weights[i][j] += noise(rng());
                     layer.weights[i][j] = std::clamp(layer.weights[i][j], -2.0f, 2.0f); // clamp les poids pour eviter les valeurs extrêmes entre -2 et 2
                 }
             }
         }
     }
+}
+
+NeuralNetwork NeuralNetwork::crossover(const NeuralNetwork& parentA, const NeuralNetwork& parentB) {
+    NeuralNetwork child = parentA;
+
+    // on echange des neurones entiers plutot que des poids isoles :
+    // les poids d'un meme neurone fonctionnent ensemble, les melanger casse ce qu'il a appris
+    for (size_t l = 0; l < child.layers.size(); l++) {
+        Layer& layer = child.layers[l];
+        const Layer& other = parentB.layers[l];
+
+        for (int i = 0; i < layer.numNeurons; i++) {
+            if (randomInt(0, 1) == 1) {
+                layer.biases[i] = other.biases[i];
+                layer.weights[i] = other.weights[i];
+            }
+        }
+    }
+
+    return child;
 }

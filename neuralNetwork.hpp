@@ -1,7 +1,6 @@
 #pragma once
 #include <vector>
 #include <cmath>
-#include <cstdlib> 
 
 struct Layer {
     int numNeurons;
@@ -23,5 +22,10 @@ public:
 
     std::vector<float> feedForward(const std::vector<float>& inputs);
     
-    void mutate(float mutationRate);
+    // mutationRate : probabilite de muter chaque poids/biais
+    // mutationStrength : ecart-type du bruit gaussien ajoute
+    void mutate(float mutationRate, float mutationStrength);
+
+    // enfant de deux parents de meme topologie : chaque neurone (biais + poids entrants) vient de l'un ou l'autre
+    static NeuralNetwork crossover(const NeuralNetwork& parentA, const NeuralNetwork& parentB);
 };
