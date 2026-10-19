@@ -13,7 +13,29 @@ CircuitSelectState::CircuitSelectState() {
 
 void CircuitSelectState::onEnter(App* app)
 {
-    ui::ScrollViewProps listProps = {.size = {400, 500}};
+    root.mount([this, app] { return buildUI(app); });
+}
+
+void CircuitSelectState::play(App* app, const std::string& file)
+{
+    // load before switching screen: an invalid file shows an error instead of crashing the game
+    std::string error;
+    std::optional<Track> track = loadTrack(TRACKS_DIR + file, &error);
+    if (!track) {
+        loadError = file + " : " + error;
+        root.invalidate();
+        return;
+    }
+    app->changeState(std::make_unique<PlayState>(std::move(*track)));
+}
+
+ui::ComponentPtr CircuitSelectState::buildUI(App* app)
+{
+    ui::ScrollViewProps listProps = {
+        .size = {400, 500},
+        .offset = listScroll,
+        .onScroll = [this](float offset) { listScroll = offset; },
+    };
     float buttonWidth = listProps.size.x - 2 * listProps.padding - 2 * ui::ScrollView::SCROLLBAR_WIDTH;
 
     // un bouton par circuit trouve dans le dossier
@@ -21,27 +43,29 @@ void CircuitSelectState::onEnter(App* app)
     for (const std::string& file : trackFiles) {
         trackButtons.push_back(ui::button({
             .text = file,
-            .onClick = [app, file] { app->changeState(std::make_unique<PlayState>(TRACKS_DIR + file)); },
+            .onClick = [this, app, file] { play(app, file); },
             .size = {buttonWidth, 50},
         }));
     }
 
-    root = ui::column({.spacing = 40},
+    auto tree = ui::column({.spacing = 30},
         ui::label({.text = "SELECT YOUR CIRCUIT", .fontSize = 40}),
         ui::scrollView(listProps, ui::columnOf({.spacing = 10}, std::move(trackButtons))),
+        ui::label({.text = loadError, .fontSize = 18, .color = ui::theme::accent}),
         ui::button({.text = "RETOUR", .onClick = [app] { app->changeState(std::make_unique<MainMenuState>()); }})
     );
-    ui::placeCentered(*root, app->W / 2.0f, 50);
+    ui::placeCentered(*tree, app->W / 2.0f, 40);
+    return tree;
 }
 
 void CircuitSelectState::update(App* app)
 {
     (void)app;
-    root->update(ui::Input::poll());
+    root.update(ui::Input::poll());
 }
 
 void CircuitSelectState::render(App* app)
 {
     (void)app;
-    root->draw();
+    root.draw();
 }

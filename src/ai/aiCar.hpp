@@ -47,7 +47,7 @@ public:
     float aliveTimer = 0.0f;       // Depuis combien de temps la voiture est en vie ?
     float lowSpeedTimer = 0.0f;    // Depuis combien de temps roule-t-elle trop doucement ?
     
-    float MIN_SPEED = 5.0f;    // Vitesse minimum exigée (en pixels par seconde)
+    float MIN_SPEED = 5.0f;    // minimum speed in pixels per FRAME (top speed is ~9 px/frame)
     float MAX_SLOW_TIME = 5.0f;  // Temps maximum autorisé en sous-régime
     float GRACE_PERIOD = 1.0f;   // Temps laissé au départ pour accélérer
 

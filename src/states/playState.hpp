@@ -8,7 +8,8 @@
 
 class PlayState : public State {
 public:
-    PlayState(const std::string& trackName);
+    // the track is loaded (and validated) by the caller, see CircuitSelectState
+    explicit PlayState(Track loadedTrack);
     ~PlayState() = default;
 
     bool isPausable() const override { return true; }

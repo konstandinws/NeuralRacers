@@ -6,22 +6,21 @@
 #include <iostream>
 
 
-PlayState::PlayState(const std::string& trackName) : raceTime(0.0f) {
-    // Charger le track à partir du nom fourni
-    track = loadTrack(trackName);
+PlayState::PlayState(Track loadedTrack) : track(std::move(loadedTrack)), raceTime(0.0f) {
 
     // FIX abominable je me suis perdu dans les randiants vs degres
     car = Car(track.start.x, track.start.y, (track.angleStart * RAD2DEG) + 90.0f); 
 
-    camera = { 0 };
+    camera = {};
     camera.target = car.pos;
-    camera.offset = { 600, 400 };
+    camera.offset = { GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f };  // car centered on screen
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
 }
 
 void PlayState::update(App* app) {
+    (void)app;
     if (IsKeyDown(KEY_LEFT))  car.turn(-4.0f);
     if (IsKeyDown(KEY_RIGHT)) car.turn(4.0f);
     if (IsKeyDown(KEY_UP))    car.accelerate(1.0f);

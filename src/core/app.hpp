@@ -2,9 +2,6 @@
 #include <memory>
 #include <vector>
 #include "core/state.hpp"
-#include "game/car.hpp"
-#include "game/track.hpp"
-#include "editor/trackEditor.hpp"
 #include "core/renderer.hpp"
 
 class App {
@@ -27,22 +24,14 @@ private:
     void doPush(std::unique_ptr<State> state);
     void doPop();
 
-
 public:
     const int W = 1200;
     const int H = 800;
     Renderer renderer;
     float dt;
 
-    // Car car;
-    // Track track;
-    // TrackEditor editor;
-    // Camera2D camera;
-
     App();
     ~App();
-
-
 
     void run();
     void quit() { running = false; }

@@ -8,7 +8,7 @@
 #include "ui/ui.hpp"
 
 TrackEditorState::TrackEditorState() {
-    camera = { 0 };
+    camera = {};
     camera.zoom = 1.0f;
     camera.offset = { 0, 0 }; // L'origine de la caméra
     camera.target = { 0, 0 }; // La cible de la caméra

@@ -12,7 +12,10 @@ void Renderer::drawCar(Car* car) {
 }
 
 void Renderer::showHUD(const Car& car, float raceTime, float endRaceTime) {
-    DrawRectangle(0, 800 - 80, 1200, 80, Fade(LIGHTGRAY, 0.7f));
+    // bottom bar, sized from the window instead of hardcoded 1200x800
+    int screenWidth = GetScreenWidth();
+    int screenHeight = GetScreenHeight();
+    DrawRectangle(0, screenHeight - 80, screenWidth, 80, Fade(LIGHTGRAY, 0.7f));
 
     // calcule l'hypothenuse
     float speedPixels = Vector2Length(car.velocity);
@@ -23,10 +26,10 @@ void Renderer::showHUD(const Car& car, float raceTime, float endRaceTime) {
     const char* textTemps = TextFormat("TEMPS : %.2f s", raceTime);
     const char* textMeilleurTemps = TextFormat("MEILLEUR : %.2f s", endRaceTime);
     // On dessine le texte par-dessus le rectangle
-    DrawText(textVitesse, 50, 800 - 55, 30, GREEN);
-    DrawText(textTemps, 1200 - 350, 800 - 55, 30, YELLOW);
+    DrawText(textVitesse, 50, screenHeight - 55, 30, GREEN);
+    DrawText(textTemps, screenWidth - 350, screenHeight - 55, 30, YELLOW);
     if(endRaceTime < std::numeric_limits<float>::max()) {
-        DrawText(textMeilleurTemps, 1200 - 350, 800 - 25, 30, GOLD);
+        DrawText(textMeilleurTemps, screenWidth - 350, screenHeight - 25, 30, GOLD);
     }
 }
 

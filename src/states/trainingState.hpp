@@ -8,7 +8,7 @@
 
 // parametres choisis dans TrainConfigState
 struct TrainingConfig {
-    std::string trackPath;
+    Track track;
     int carCount = 50;
     std::string modelName;                   // fichier ou le meilleur reseau est sauvegarde
     std::optional<SavedModel> startModel;    // vide = nouveau modele avec des poids aleatoires

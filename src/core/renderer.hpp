@@ -7,8 +7,6 @@ class Renderer {
 public:
 
     void drawTrack(Track* track);
-    
-    void drawGrid();
 
     void drawCar(Car* car);
     void showCarBindings();

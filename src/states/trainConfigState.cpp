@@ -32,8 +32,9 @@ void TrainConfigState::onEnter(App* app) {
 
 void TrainConfigState::selectTrack(int index) {
     selectedTrack = index;
-    // on charge le circuit pour prevenir s'il n'a pas de checkpoints
-    selectedCheckpoints = (int)loadTrack(TRACKS_DIR + trackFiles[index]).checkpoints.size();
+    // loaded now: to warn about missing checkpoints, refuse invalid files, and hand it to the training
+    trackError.clear();
+    selectedTrackData = loadTrack(TRACKS_DIR + trackFiles[index], &trackError);
     root.invalidate();
 }
 
@@ -72,7 +73,7 @@ void TrainConfigState::selectModel(int index) {
 
 void TrainConfigState::launch(App* app) {
     TrainingConfig config;
-    config.trackPath = TRACKS_DIR + trackFiles[selectedTrack];
+    config.track = *selectedTrackData;
     config.carCount = carCount;
 
     if (selectedModel < 0) {
@@ -118,10 +119,14 @@ ui::ComponentPtr TrainConfigState::buildUI(App* app) {
         : selectList(trackFiles, selectedTrack, [this](int i) { selectTrack(i); }, &trackScroll);
 
     // sans checkpoints, la fitness retombe sur la distance a vol d'oiseau jusqu'a l'arrivee
-    bool noCheckpoints = selectedTrack >= 0 && selectedCheckpoints == 0;
+    int checkpointCount = selectedTrackData ? (int)selectedTrackData->checkpoints.size() : 0;
+    bool trackInvalid = selectedTrack >= 0 && !selectedTrackData;
+    bool noCheckpoints = selectedTrackData && checkpointCount == 0;
     std::string trackInfo = selectedTrack < 0 ? ""
+        : trackInvalid ? trackError
         : noCheckpoints ? "Pas de checkpoints : l'IA apprendra mal"
-        : std::to_string(selectedCheckpoints) + " checkpoints";
+        : std::to_string(checkpointCount) + " checkpoints";
+    Color trackInfoColor = trackInvalid ? ui::theme::accent : noCheckpoints ? ORANGE : ui::theme::border;
 
     // --- modele : le 1er element de la liste est "nouveau modele" ---
     std::vector<std::string> modelLabels = {"+ Nouveau modele"};
@@ -149,7 +154,7 @@ ui::ComponentPtr TrainConfigState::buildUI(App* app) {
         : "Deja entraine : " + std::to_string(selectedModelData->generation) + " generations";
     Color modelInfoColor = !modelError.empty() ? ui::theme::accent : ui::theme::border;
 
-    bool canLaunch = selectedTrack >= 0 && (isNewModel || selectedModelData.has_value());
+    bool canLaunch = selectedTrackData.has_value() && (isNewModel || selectedModelData.has_value());
 
     auto tree = ui::column({.spacing = 40},
         ui::label({.text = "ENTRAINEMENT", .fontSize = 40}),
@@ -157,7 +162,7 @@ ui::ComponentPtr TrainConfigState::buildUI(App* app) {
             ui::column({.spacing = 15, .align = ui::Align::Start, .minWidth = COLUMN_WIDTH},
                 ui::label({.text = "Circuit", .fontSize = 24}),
                 std::move(trackList),
-                ui::label({.text = trackInfo, .fontSize = 18, .color = noCheckpoints ? ORANGE : ui::theme::border})
+                ui::label({.text = trackInfo, .fontSize = 18, .color = trackInfoColor})
             ),
             ui::column({.spacing = 15, .align = ui::Align::Start, .minWidth = COLUMN_WIDTH},
                 ui::label({.text = "Modele", .fontSize = 24}),

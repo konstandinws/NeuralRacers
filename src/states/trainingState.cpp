@@ -9,7 +9,7 @@
 
 TrainingState::TrainingState(TrainingConfig config) : modelName(config.modelName)
 {
-    track = loadTrack(config.trackPath);
+    track = config.track;
 
     const NeuralNetwork* startNetwork = nullptr;
     if (config.startModel) {
@@ -20,7 +20,7 @@ TrainingState::TrainingState(TrainingConfig config) : modelName(config.modelName
     // il faut au moins 2 voitures pour avoir 2 parents dans nextGeneration
     createAICars(std::max(2, config.carCount), startNetwork);
 
-    camera = {0};
+    camera = {};
     camera.zoom = 1.0f;
     camera.offset = {0, 0};
     camera.target = {0, 0};
@@ -28,6 +28,7 @@ TrainingState::TrainingState(TrainingConfig config) : modelName(config.modelName
 
 void TrainingState::update(App* app)
 {
+    (void)app;
     // control de la caméra
     if(IsKeyDown(KEY_W)) {
         camera.target.y -= 20; // Déplacer la caméra vers le haut

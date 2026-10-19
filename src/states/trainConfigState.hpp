@@ -5,6 +5,7 @@
 #include <vector>
 #include "core/state.hpp"
 #include "io/modelSerializer.hpp"
+#include "game/track.hpp"
 #include "ui/component.hpp"
 #include "ui/root.hpp"
 
@@ -28,7 +29,8 @@ private:
 
     std::vector<std::string> trackFiles;
     int selectedTrack = -1;
-    int selectedCheckpoints = 0;
+    std::optional<Track> selectedTrackData;  // empty if the file is invalid
+    std::string trackError;
     float trackScroll = 0.0f;  // garde la position des listes quand l'interface est reconstruite
 
     std::vector<std::string> modelNames;

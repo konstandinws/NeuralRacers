@@ -1,5 +1,6 @@
 #pragma once
 #include <fstream>
+#include <optional>
 #include <string>
 #include "game/track.hpp"
 
@@ -14,12 +15,6 @@ bool trackExists(const std::string& name);
 // premier nom libre de la forme nouveau_circuit_X, X = plus grand numero existant + 1
 std::string nextDefaultTrackName();
 
-Track loadTrack(const std::string& filename);
-
-void parseLine(std::string& line, std::vector<Line>& lines);
-
-void parseStart(std::string& line, Point& start);
-
-void parseAngleStart(std::string& line, float& angleStart);
-
-void parseFinish(std::string& line, Line& finish);
+// Reads a track file. Returns nullopt when the file is missing or malformed;
+// if error is given, it receives a short message that can be shown to the player.
+std::optional<Track> loadTrack(const std::string& path, std::string* error = nullptr);
