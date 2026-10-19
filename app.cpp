@@ -9,34 +9,59 @@ App::App() : running(true) {
     SetTargetFPS(60);
     Renderer renderer;
 
-    
-    pushState(new MainMenuState());
+
+    doPush(new MainMenuState());
 }
 
 App::~App() {
-    while (!stateStack.empty()) popState();
+    // applique les actions restantes pour ne pas perdre (leak) les etats deja crees
+    applyPendingActions();
+    while (!stateStack.empty()) doPop();
     CloseWindow();
 }
 
+// les fonctions publiques ne modifient pas la pile directement, elles mettent l'action en attente
+
 void App::pushState(State* state) {
-    stateStack.push_back(state);
+    pendingActions.push_back([this, state]() { doPush(state); });
 }
 
 void App::popState() {
-    if (!stateStack.empty()) {
-        delete stateStack.back(); 
-        stateStack.pop_back();    
-    }
+    pendingActions.push_back([this]() { doPop(); });
 }
 
 void App::clearAndPush(State* state) {
-    while (!stateStack.empty()) popState();
-    pushState(state);
+    pendingActions.push_back([this, state]() {
+        while (!stateStack.empty()) doPop();
+        doPush(state);
+    });
 }
 
 void App::changeState(State* state) {
-    popState();
-    pushState(state);
+    pendingActions.push_back([this, state]() {
+        doPop();
+        doPush(state);
+    });
+}
+
+void App::doPush(State* state) {
+    stateStack.push_back(state);
+}
+
+void App::doPop() {
+    if (!stateStack.empty()) {
+        delete stateStack.back();
+        stateStack.pop_back();
+    }
+}
+
+void App::applyPendingActions() {
+    // on deplace la liste avant de l'executer au cas ou une action en ajoute une autre
+    std::vector<std::function<void()>> actions = std::move(pendingActions);
+    pendingActions.clear();
+    for (auto& action : actions) {
+        action();
+    }
 }
 
 void App::run() {
@@ -45,23 +70,17 @@ void App::run() {
 
         BeginDrawing();
         ClearBackground(BLACK);
-        if (!stateStack.empty())
-            if(stateStack.back()-> isPausable() && IsKeyPressed(KEY_ESCAPE)) {
+        if (!stateStack.empty()) {
+            if (stateStack.back()->isPausable() && IsKeyPressed(KEY_ESCAPE)) {
                 pushState(new PauseState());
-            }
-            else{
+            } else {
                 stateStack.back()->update(this);
                 stateStack.back()->render(this);
             }
-    
-        // bug probable car je change d'etat en etant dans la boucle quand j'appuie sur ESC
-        // car je supprime tous les elements de boucle mais continue a appeler render, parfois ca marche surement une UB
-        // un moyen de fixe et d'utiliser des lambdas pour faire les changements d'etats apres la boucle de rendu 
-
-        // for (State* state : stateStack)
-        //     state->render(this);
-
+        }
         EndDrawing();
 
+        // tous les etats ont fini de s'executer pour cette frame, on peut modifier la pile sans risque
+        applyPendingActions();
     }
 }
