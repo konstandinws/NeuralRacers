@@ -1,0 +1,6 @@
+# Copie ce fichier en config.mk (ignore par git) et adapte-le a ta machine.
+#
+# Dossier d'installation de raylib, qui contient include/ et lib/.
+# Obligatoire sous Windows. Sur macOS (Homebrew) et Linux, il est detecte automatiquement.
+# Telechargement : https://github.com/raysan5/raylib/releases (ex. raylib-5.5_win64_mingw-w64.zip)
+RAYLIB_PATH = C:/chemin/vers/raylib-5.5_win64_mingw-w64

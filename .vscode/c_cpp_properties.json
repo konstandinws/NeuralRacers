@@ -3,7 +3,8 @@
         {
             "name": "Win32",
             "includePath": [
-                "C:/Users/Konstantinos/Desktop/falling sand/**",
+                "${workspaceFolder}/src",
+                "${workspaceFolder}/external/raygui",
                 "C:/Users/Konstantinos/Desktop/raylib-5.5_win64_mingw-w64/include"
             ],
             "defines": [
@@ -16,6 +17,18 @@
             "cStandard": "c17",
             "cppStandard": "c++17",
             "intelliSenseMode": "windows-msvc-x64"
+        },
+        {
+            "name": "Mac",
+            "includePath": [
+                "${workspaceFolder}/src",
+                "${workspaceFolder}/external/raygui",
+                "/opt/homebrew/opt/raylib/include"
+            ],
+            "compilerPath": "/usr/bin/clang++",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "macos-clang-arm64"
         }
     ],
     "version": 4

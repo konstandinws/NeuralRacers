@@ -1,4 +1,11 @@
+# build
+build/
 *.exe
+game
+
+# configuration locale a chaque machine (voir config.mk.example)
+config.mk
+
 test
 test.cpptxt
 Analyse.md
