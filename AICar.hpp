@@ -18,8 +18,17 @@ public:
     float score = 0.0f;
     NeuralNetwork nn;
 
+    // progression sur le circuit : index de la prochaine porte a franchir (checkpoints puis arrivee)
+    // progress = portes franchies + avancement (0 a 1) vers la suivante
+    int nextGate = 0;
+    float progress = 0.0f;
+    bool hasFinished = false;
+
+    float GATE_SCORE = 1000.0f;   // points par porte franchie
+    float TIME_PENALTY = 10.0f;   // points perdus par seconde, pour favoriser les plus rapides
+
     // Pour evite que les voitures fassent du surplace
-    float bestDistanceToFinish = std::numeric_limits<float>::max(); 
+    float bestProgress = 0.0f;
     float stagnationCounter = 0.0f;
     float stagnationLimit = 3.0f;
 
@@ -34,6 +43,7 @@ public:
     AICar(float x, float y, float angle);
     void updateSensors(const Track& track);
     void updateAI(const Track& track);
+    void updateProgress(const Track& track);
     void drawSensors();
     void initializeSensors(float fov, int numRays, float maxDistance);
 };

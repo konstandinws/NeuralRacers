@@ -53,13 +53,22 @@ void TrackEditorState::update(App* app) {
             editor.placeAngleStart(camera);
         } else if(editor.finish == nullptr) {
             editor.placeFinish(camera);
+        } else {
+            editor.placeCheckpoint(camera);
         }
+    }
+
+    if (IsKeyPressed(KEY_BACKSPACE)) {
+        editor.removeLastCheckpoint();
     }
 
 }
 
 void TrackEditorState::render(App* app) {
     DrawText("Track Editor - WASD to move, Q/E to zoom, SPACE to clear, G to save", 10, 10, 20, RAYWHITE);
+    if (editor.finish != nullptr) {
+        DrawText("Checkpoints: 2 clicks each, in driving order - BACKSPACE to undo", 10, 35, 20, SKYBLUE);
+    }
     BeginMode2D(camera);
     editor.handleClick(camera);
 
@@ -70,6 +79,10 @@ void TrackEditorState::render(App* app) {
     }
     if(editor.angleStart != nullptr) {
         DrawLine(editor.start->x, editor.start->y, editor.start->x + cos(*editor.angleStart) * 50, editor.start->y + sin(*editor.angleStart) * 50, BLUE);
+    }
+    if(editor.pendingCheckpoint) {
+        Vector2 mouse = GetScreenToWorld2D(GetMousePosition(), camera);
+        DrawLine(editor.pendingCheckpoint->x, editor.pendingCheckpoint->y, mouse.x, mouse.y, SKYBLUE);
     }
     EndMode2D();
 }

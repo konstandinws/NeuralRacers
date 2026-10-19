@@ -38,6 +38,9 @@ void Renderer::drawTrack(Track* track) {
     for(Line& l : track->lines){
         DrawLine(l.a.x, l.a.y, l.b.x, l.b.y, WHITE);
     }
+    for(Line& c : track->checkpoints){
+        DrawLine(c.a.x, c.a.y, c.b.x, c.b.y, Fade(SKYBLUE, 0.3f));
+    }
     DrawLine(track->finish.a.x, track->finish.a.y, track->finish.b.x, track->finish.b.y, YELLOW);
 }
 

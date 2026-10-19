@@ -45,12 +45,9 @@ void TrainConfigState::update(App* app)
 
     for(AICar& aiCar : aiCars) {
         aiCar.updateAI(track);
+        // l'arrivee est geree par AICar::updateProgress (derniere porte)
         if (track.checkWallCollision(aiCar)) {
             aiCar.isDead = true;
-        }
-        if (track.checkFinishLine(aiCar)) {
-            aiCar.score += 1000.0f; // Bonus pour avoir franchi la ligne d'arrivée
-            aiCar.isDead = true; // On considère que la voiture a terminé sa course
         }
         if (!aiCar.isDead) {
             allDead = false;

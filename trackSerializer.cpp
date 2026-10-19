@@ -11,6 +11,12 @@ void saveTrack(const Track& track) {
     file << "A " << track.angleStart << std::endl;
     file << "F " << track.finish.a.x << "," << track.finish.a.y << ";" << track.finish.b.x << "," << track.finish.b.y << std::endl;
 
+    // les checkpoints sont ecrits dans l'ordre de passage
+    for (const Line& c : track.checkpoints)
+    {
+        file << "C " << c.a.x << "," << c.a.y << ";" << c.b.x << "," << c.b.y << std::endl;
+    }
+
     for (Line l : track.lines)
     {
         file << l.a.x << "," << l.a.y << ";" << l.b.x << "," << l.b.y << std::endl;
@@ -26,6 +32,7 @@ Track loadTrack(const std::string& filename) {
     float angleStart;
     Point start;
     Line finish;
+    std::vector<Line> checkpoints;
 
     std::fstream file(filename, std::ios::in);
 
@@ -40,6 +47,11 @@ Track loadTrack(const std::string& filename) {
             parseAngleStart(line, angleStart);
         } else if (line[0] == 'F') {
             parseFinish(line, finish);
+        } else if (line[0] == 'C') {
+            // meme format que la ligne d'arrivee : "C x1,y1;x2,y2"
+            Line checkpoint;
+            parseFinish(line, checkpoint);
+            checkpoints.push_back(checkpoint);
         } else {
             parseLine(line, lines);
         }
@@ -47,7 +59,7 @@ Track loadTrack(const std::string& filename) {
 
     file.close();
 
-    return Track(lines, angleStart, start, finish);
+    return Track(lines, angleStart, start, finish, checkpoints);
 }
 
 void parseLine(std::string& line, std::vector<Line>& lines) {

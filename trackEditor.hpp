@@ -5,6 +5,7 @@
 #include "raylib.h"
 #include <vector>
 #include <queue>
+#include <optional>
 #include "track.hpp"
 
 struct TrackEditor {
@@ -14,7 +15,11 @@ struct TrackEditor {
     int closeRadius = 20;
     bool isComplete = false;
     std::vector<Point> finishLine{};
-    
+
+    // checkpoints places dans l'ordre de passage, 2 clics par checkpoint
+    std::vector<Line> checkpoints{};
+    std::optional<Point> pendingCheckpoint; // premier point du checkpoint en cours
+
     // utiliser des smarts_pointers pour eviter le destructeur
     Point* start = nullptr;
     Line* finish = nullptr;
@@ -32,6 +37,8 @@ struct TrackEditor {
     void placeStart(const Camera2D& camera);
     void placeAngleStart(const Camera2D& camera);
     void placeFinish(const Camera2D& camera);
+    void placeCheckpoint(const Camera2D& camera);
+    void removeLastCheckpoint();
     Track saveTrack();
 
 public:

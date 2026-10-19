@@ -120,11 +120,40 @@ void TrackEditor::clear()
     finishLine.clear();
     delete angleStart;
     angleStart = nullptr;
+
+    checkpoints.clear();
+    pendingCheckpoint.reset();
+}
+
+void TrackEditor::placeCheckpoint(const Camera2D& camera)
+{
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+    {
+        Vector2 mousePos = GetScreenToWorld2D(GetMousePosition(), camera);
+        Point p = {mousePos.x, mousePos.y};
+
+        if (!pendingCheckpoint) {
+            pendingCheckpoint = p;
+        } else {
+            checkpoints.push_back(Line{*pendingCheckpoint, p});
+            pendingCheckpoint.reset();
+        }
+    }
+}
+
+void TrackEditor::removeLastCheckpoint()
+{
+    // annule d'abord le checkpoint en cours, sinon le dernier checkpoint complet
+    if (pendingCheckpoint) {
+        pendingCheckpoint.reset();
+    } else if (!checkpoints.empty()) {
+        checkpoints.pop_back();
+    }
 }
 
 Track TrackEditor::saveTrack()
 {
-    return Track(lines, *angleStart, *start, *finish);
+    return Track(lines, *angleStart, *start, *finish, checkpoints);
 }
 
 bool TrackEditor::isFinished() {
@@ -152,6 +181,18 @@ void TrackEditor::draw()
 
     if(finish != nullptr) {
         DrawLine(finish->a.x, finish->a.y, finish->b.x, finish->b.y, RED);
+    }
+
+    // numero de chaque checkpoint pour verifier l'ordre de passage
+    for (size_t i = 0; i < checkpoints.size(); i++)
+    {
+        const Line& c = checkpoints[i];
+        DrawLine(c.a.x, c.a.y, c.b.x, c.b.y, SKYBLUE);
+        DrawText(TextFormat("%d", (int)i + 1), (c.a.x + c.b.x) / 2.0f + 5, (c.a.y + c.b.y) / 2.0f + 5, 20, SKYBLUE);
+    }
+
+    if (pendingCheckpoint) {
+        DrawCircle(pendingCheckpoint->x, pendingCheckpoint->y, 5, SKYBLUE);
     }
 
     
