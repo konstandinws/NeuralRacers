@@ -1,4 +1,4 @@
-# Neuro-Trackmania
+# Neural Racers
 
 ![C++20](https://img.shields.io/badge/C%2B%2B-20-00599C?logo=cplusplus)
 ![raylib](https://img.shields.io/badge/raylib-5.5-black)
