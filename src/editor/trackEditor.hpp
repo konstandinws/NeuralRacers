@@ -16,9 +16,9 @@ struct TrackEditor {
     bool isComplete = false;
     std::vector<Point> finishLine{};
 
-    // checkpoints places dans l'ordre de passage, 2 clics par checkpoint
+    // checkpoints placed in driving order, 2 clicks per checkpoint
     std::vector<Line> checkpoints{};
-    std::optional<Point> pendingCheckpoint; // premier point du checkpoint en cours
+    std::optional<Point> pendingCheckpoint; // first point of the checkpoint being placed
 
     // empty until placed: no raw pointers, so no destructor and copying is safe (rule of zero)
     std::optional<Point> start;

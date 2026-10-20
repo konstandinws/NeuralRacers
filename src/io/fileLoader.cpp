@@ -12,7 +12,7 @@ void loadFilesNameFromFolder(const std::string& folderPath, std::vector<std::str
             }
         }
     }
-    // l'ordre du dossier depend du systeme : on trie pour avoir toujours le meme affichage
+    // folder order depends on the OS: sort so the display is always the same
     std::sort(filesNames.begin(), filesNames.end());
 }
 

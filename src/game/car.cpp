@@ -37,13 +37,13 @@ void Car::updateCollisionLines() {
     Point p3 = {pos.x + w2 * cos_a - h2 * sin_a, pos.y + w2 * sin_a + h2 * cos_a};
     Point p4 = {pos.x - w2 * cos_a - h2 * sin_a, pos.y - w2 * sin_a + h2 * cos_a};
     
-    carLines[0] = {p1, p2}; // haut
-    carLines[1] = {p2, p3}; // droite
-    carLines[2] = {p3, p4}; // bas
-    carLines[3] = {p4, p1}; // gauche
+    carLines[0] = {p1, p2}; // top
+    carLines[1] = {p2, p3}; // right
+    carLines[2] = {p3, p4}; // bottom
+    carLines[3] = {p4, p1}; // left
 }
 
-// fonction plus pour le debug
+// mostly for debugging
 void Car::drawCollision() {
     for(Line& l : carLines){
         DrawLine(l.a.x, l.a.y, l.b.x, l.b.y, GREEN);

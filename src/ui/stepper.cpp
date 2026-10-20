@@ -29,7 +29,7 @@ Stepper::Stepper(StepperProps props)
         std::string amount = std::to_string(step);
         minusButtons.push_back(Button({.text = "-" + amount, .onClick = [this, step] { setValue(value - step); }, .size = {BUTTON_SIZE, BUTTON_SIZE}}));
     }
-    // cote + : du plus petit au plus grand pour que la rangee soit symetrique
+    // + side: smallest to largest so the row is symmetric
     for (auto it = this->props.steps.rbegin(); it != this->props.steps.rend(); ++it) {
         int step = *it;
         plusButtons.push_back(Button({.text = "+" + std::to_string(step), .onClick = [this, step] { setValue(value + step); }, .size = {BUTTON_SIZE, BUTTON_SIZE}}));
@@ -43,7 +43,7 @@ Stepper::Stepper(StepperProps props)
 
 void Stepper::setValue(int newValue) {
     newValue = std::clamp(newValue, props.min, props.max);
-    field.setText(std::to_string(newValue));  // le champ affiche toujours la valeur retenue
+    field.setText(std::to_string(newValue));  // the field always shows the accepted value
     if (newValue != value) {
         value = newValue;
         if (props.onChange) {
@@ -54,7 +54,7 @@ void Stepper::setValue(int newValue) {
 
 void Stepper::commitTypedValue() {
     const std::string& typed = field.getText();
-    // champ vide : on remet l'ancienne valeur
+    // empty field: restore the previous value
     setValue(typed.empty() ? value : std::stoi(typed));
 }
 
@@ -75,7 +75,7 @@ void Stepper::setPosition(Vector2 position) {
 }
 
 void Stepper::update(const Input& input) {
-    // le champ d'abord : un clic sur un bouton valide la saisie en cours avant que le bouton s'applique
+    // field first: clicking a button commits the pending input before the button applies
     field.update(input);
     for (Button& button : minusButtons) {
         button.update(input);

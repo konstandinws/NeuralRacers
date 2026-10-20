@@ -10,12 +10,12 @@
 #include "ui/stepper.hpp"
 #include "ui/root.hpp"
 
-// fonctions de creation pour decrire l'interface comme un arbre, a la maniere du JSX :
+// factory functions to describe the UI as a tree, JSX style:
 //
 //   ui::column({.spacing = 20},
-//       ui::label({.text = "Titre", .fontSize = 40}),
+//       ui::label({.text = "Title", .fontSize = 40}),
 //       ui::row({.spacing = 10},
-//           ui::button({.text = "Annuler", .onClick = [] { ... }}),
+//           ui::button({.text = "Cancel", .onClick = [] { ... }}),
 //           ui::button({.text = "OK", .onClick = [] { ... }})
 //       )
 //   );
@@ -47,7 +47,7 @@ ComponentPtr row(RowProps props, Children... children) {
     return std::make_unique<Stack>(Stack::Direction::Horizontal, props, std::move(list));
 }
 
-// variante pour une liste construite dynamiquement (ex : un bouton par fichier)
+// overload for a dynamically built list (e.g. one button per file)
 inline ComponentPtr columnOf(ColumnProps props, std::vector<ComponentPtr> children) {
     return std::make_unique<Stack>(Stack::Direction::Vertical, props, std::move(children));
 }

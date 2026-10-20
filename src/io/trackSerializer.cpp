@@ -16,12 +16,12 @@ bool trackExists(const std::string& name) {
 }
 
 std::string nextDefaultTrackName() {
-    return nextFreeName(TRACKS_DIR, "nouveau_circuit_");
+    return nextFreeName(TRACKS_DIR, "new_track_");
 }
 
 bool saveTrack(const Track& track, const std::string& name) {
 
-    // j'ai enlever le if isFinished() car on peut pas enregister un track qui n'est pas fini
+    // no isFinished() check here: an unfinished track cannot be saved anyway
 
     std::fstream file(trackPath(name), std::ios::out);
     if (!file.is_open()) {
@@ -32,7 +32,7 @@ bool saveTrack(const Track& track, const std::string& name) {
     file << "A " << track.angleStart << std::endl;
     file << "F " << track.finish.a.x << "," << track.finish.a.y << ";" << track.finish.b.x << "," << track.finish.b.y << std::endl;
 
-    // les checkpoints sont ecrits dans l'ordre de passage
+    // checkpoints are written in driving order
     for (const Line& c : track.checkpoints)
     {
         file << "C " << c.a.x << "," << c.a.y << ";" << c.b.x << "," << c.b.y << std::endl;
@@ -89,7 +89,7 @@ std::optional<Track> loadTrack(const std::string& path, std::string* error) {
 
     std::ifstream file(path);
     if (!file.is_open()) {
-        return fail("Fichier introuvable");
+        return fail("File not found");
     }
 
     std::vector<Line> lines;
@@ -138,14 +138,14 @@ std::optional<Track> loadTrack(const std::string& path, std::string* error) {
         }
 
         if (!ok) {
-            return fail("Circuit invalide (ligne " + std::to_string(lineNumber) + ")");
+            return fail("Invalid track (line " + std::to_string(lineNumber) + ")");
         }
     }
 
-    if (!hasStart) return fail("Circuit invalide : pas de depart");
-    if (!hasAngle) return fail("Circuit invalide : pas de direction");
-    if (!hasFinish) return fail("Circuit invalide : pas d'arrivee");
-    if (lines.empty()) return fail("Circuit invalide : aucun mur");
+    if (!hasStart) return fail("Invalid track: no start");
+    if (!hasAngle) return fail("Invalid track: no direction");
+    if (!hasFinish) return fail("Invalid track: no finish line");
+    if (lines.empty()) return fail("Invalid track: no walls");
 
     return Track(lines, angleStart, start, finish, checkpoints);
 }

@@ -30,7 +30,7 @@ void TrackEditor::handleClick(const Camera2D& camera)
         }
     }
 
-    // fonction de debug pour afficher les points et les lignes 
+    // debug function to print the points and lines
     if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
     {
         std::cout << "Track EDITOR  \n";
@@ -90,7 +90,7 @@ void TrackEditor::placeAngleStart(const Camera2D& camera)
 
 void TrackEditor::placeFinish(const Camera2D& camera)
 {
-    // isComplete pour etre sur, on verifie deja avant
+    // isComplete as a safety net, it is already checked before
     if(!finish && finishLine.size() < 2 && isComplete) {
          if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
@@ -139,7 +139,7 @@ void TrackEditor::placeCheckpoint(const Camera2D& camera)
 
 void TrackEditor::removeLastCheckpoint()
 {
-    // annule d'abord le checkpoint en cours, sinon le dernier checkpoint complet
+    // undo the checkpoint being placed first, otherwise the last complete one
     if (pendingCheckpoint) {
         pendingCheckpoint.reset();
     } else if (!checkpoints.empty()) {
@@ -179,7 +179,7 @@ void TrackEditor::draw()
         DrawLine(finish->a.x, finish->a.y, finish->b.x, finish->b.y, RED);
     }
 
-    // numero de chaque checkpoint pour verifier l'ordre de passage
+    // number of each checkpoint to check the driving order
     for (size_t i = 0; i < checkpoints.size(); i++)
     {
         const Line& c = checkpoints[i];

@@ -4,16 +4,16 @@
 
 namespace ui {
 
-// etat de la souris et du clavier pour une frame, lu une seule fois puis transmis a tout l'arbre de composants
-// poll() doit etre appele a chaque frame : il vide la file des caracteres tapes de raylib
+// mouse and keyboard state for one frame, read once then passed to the whole component tree
+// poll() must be called every frame: it drains raylib's typed character queue
 struct Input {
     Vector2 mouse = {0, 0};
-    bool mousePressed = false;   // bouton gauche enfonce pendant cette frame
-    bool mouseReleased = false;  // bouton gauche relache pendant cette frame
+    bool mousePressed = false;   // left button pressed this frame
+    bool mouseReleased = false;  // left button released this frame
     float wheel = 0.0f;
 
-    std::vector<int> typed;      // caracteres tapes pendant cette frame (codepoints)
-    bool backspace = false;      // appui ou repetition (touche maintenue)
+    std::vector<int> typed;      // characters typed this frame (codepoints)
+    bool backspace = false;      // press or repeat (key held down)
     bool enter = false;
 
     static Input poll() {
@@ -31,8 +31,8 @@ struct Input {
         return input;
     }
 
-    // copie sans la souris, pour les zones masquees (ex : boutons hors de la partie visible d'un ScrollView)
-    // mouseReleased est garde pour qu'un bouton enfonce puisse quand meme se relacher
+    // copy without the mouse, for hidden areas (e.g. buttons outside the visible part of a ScrollView)
+    // mouseReleased is kept so a pressed button can still be released
     Input withoutMouse() const {
         Input input = *this;
         input.mouse = {-100000.0f, -100000.0f};

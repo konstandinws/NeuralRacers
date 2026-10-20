@@ -16,8 +16,8 @@ bool saveModel(const std::string& name, const NeuralNetwork& network, int genera
     std::error_code error;
     std::filesystem::create_directories(MODELS_DIR, error);
 
-    // on ecrit dans un fichier temporaire puis on le renomme :
-    // si le jeu est ferme pendant l'ecriture, l'ancien modele reste intact
+    // write to a temporary file then rename it:
+    // if the game is closed while writing, the old model stays intact
     std::string path = modelPath(name);
     std::string tempPath = path + ".tmp";
     {
@@ -26,7 +26,7 @@ bool saveModel(const std::string& name, const NeuralNetwork& network, int genera
             return false;
         }
 
-        // precision maximale pour retrouver exactement les memes poids au chargement
+        // full precision to get exactly the same weights back when loading
         file.precision(std::numeric_limits<float>::max_digits10);
 
         file << HEADER << " " << FORMAT_VERSION << "\n";
@@ -73,7 +73,7 @@ std::optional<SavedModel> loadModel(const std::string& name) {
         return std::nullopt;
     }
 
-    // la ligne TOPOLOGY contient un nombre variable de tailles
+    // the TOPOLOGY line holds a variable number of sizes
     std::string topologyLine;
     std::getline(file >> std::ws, topologyLine);
     std::istringstream topologyStream(topologyLine);
@@ -124,5 +124,5 @@ bool modelExists(const std::string& name) {
 }
 
 std::string nextDefaultModelName() {
-    return nextFreeName(MODELS_DIR, "nouveau_modele_");
+    return nextFreeName(MODELS_DIR, "new_model_");
 }

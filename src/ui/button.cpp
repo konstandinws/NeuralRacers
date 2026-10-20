@@ -49,7 +49,7 @@ void Button::draw() const {
     DrawRectangleRounded(bounds, style.roundness, 8, background);
     DrawRectangleRoundedLinesEx(bounds, style.roundness, 8, 2.0f, border);
 
-    // texte centre dans le bouton
+    // text centered in the button
     int textWidth = MeasureText(props.text.c_str(), style.fontSize);
     DrawText(props.text.c_str(),
              (int)(bounds.x + (bounds.width - textWidth) / 2.0f),

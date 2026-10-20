@@ -1,8 +1,8 @@
 #pragma once
 #include <random>
 
-// generateur partage par tout le projet, initialise une seule fois avec une graine differente a chaque lancement
-// (rand() sans srand donnait toujours la meme population)
+// generator shared by the whole project, seeded once with a different seed on each launch
+// (rand() without srand always gave the same population)
 inline std::mt19937& rng() {
     static std::mt19937 generator(std::random_device{}());
     return generator;

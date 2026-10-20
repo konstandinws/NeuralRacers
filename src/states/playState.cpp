@@ -8,7 +8,7 @@
 
 PlayState::PlayState(Track loadedTrack) : track(std::move(loadedTrack)), raceTime(0.0f) {
 
-    // FIX abominable je me suis perdu dans les randiants vs degres
+    // ugly fix, I got lost between radians and degrees
     car = Car(track.start.x, track.start.y, (track.angleStart * RAD2DEG) + 90.0f); 
 
     camera = {};
@@ -55,7 +55,7 @@ void PlayState::update(App* app) {
 void PlayState::render(App* app) {
 
     BeginMode2D(camera);
-    // lignes de collision pour le debug
+    // collision lines for debugging
     //car.drawCollision();
     app->renderer.drawTrack(&track);
     app->renderer.drawCar(&car);

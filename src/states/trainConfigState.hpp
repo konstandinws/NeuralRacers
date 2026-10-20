@@ -9,7 +9,7 @@
 #include "ui/component.hpp"
 #include "ui/root.hpp"
 
-// ecran avant l'entrainement : choix du circuit, du modele (nouveau ou existant) et du nombre de voitures
+// pre-training screen: choose the track, the model (new or existing) and the number of cars
 class TrainConfigState : public State
 {
 public:
@@ -21,7 +21,7 @@ public:
 
 private:
     ui::ComponentPtr buildUI(App* app);
-    // liste defilante de boutons dont un seul est selectionne
+    // scrolling list of buttons with a single selected one
     ui::ComponentPtr selectList(const std::vector<std::string>& labels, int selected, std::function<void(int)> onSelect, float* scroll);
     void selectTrack(int index);
     void selectModel(int index);
@@ -31,12 +31,12 @@ private:
     int selectedTrack = -1;
     std::optional<Track> selectedTrackData;  // empty if the file is invalid
     std::string trackError;
-    float trackScroll = 0.0f;  // garde la position des listes quand l'interface est reconstruite
+    float trackScroll = 0.0f;  // keeps the lists' scroll position when the UI is rebuilt
 
     std::vector<std::string> modelNames;
-    int selectedModel = -1;    // -1 = nouveau modele
+    int selectedModel = -1;    // -1 = new model
     std::optional<SavedModel> selectedModelData;
-    bool selectedModelAdapted = false;  // ancien modele auquel on a ajoute les entrees de vitesse
+    bool selectedModelAdapted = false;  // old model that had the speed inputs added
     std::string newModelName;
     std::string modelError;
     float modelScroll = 0.0f;
@@ -45,6 +45,6 @@ private:
 
     ui::Root root;
 
-    static constexpr int MIN_CARS = 2;   // l'algorithme genetique a besoin de 2 parents
+    static constexpr int MIN_CARS = 2;   // the genetic algorithm needs 2 parents
     static constexpr int MAX_CARS = 300;
 };

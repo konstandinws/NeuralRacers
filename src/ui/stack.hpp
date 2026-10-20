@@ -7,16 +7,16 @@ namespace ui {
 enum class Align { Center, Start };
 
 struct StackProps {
-    float spacing = 10.0f;        // espace entre deux enfants
-    Align align = Align::Center;  // placement sur l'autre axe : centre, ou en haut / a gauche
-    float minWidth = 0.0f;        // evite que la mise en page bouge quand le contenu change de largeur
+    float spacing = 10.0f;        // space between two children
+    Align align = Align::Center;  // placement on the other axis: centered, or top / left
+    float minWidth = 0.0f;        // keeps the layout from shifting when the content width changes
 };
 
 using ColumnProps = StackProps;
 using RowProps = StackProps;
 
-// conteneur qui aligne ses enfants les uns apres les autres et les centre sur l'autre axe
-// (equivalent d'un flexbox : flex-direction column ou row, align-items center)
+// container that lays out its children one after another and centers them on the other axis
+// (like a flexbox: flex-direction column or row, align-items center)
 class Stack : public Component {
 public:
     enum class Direction { Vertical, Horizontal };

@@ -5,8 +5,8 @@
 
 namespace ui {
 
-// brique de base de l'interface, comme un composant React :
-// il recoit ses "props" a la construction, gere les entrees dans update et se dessine dans draw
+// basic UI building block, like a React component:
+// it receives its "props" on construction, handles input in update and draws itself in draw
 class Component {
 public:
     virtual ~Component() = default;
@@ -14,7 +14,7 @@ public:
     virtual void update(const Input& input) { (void)input; }
     virtual void draw() const = 0;
 
-    // place le coin haut-gauche, les conteneurs la redefinissent pour deplacer leurs enfants
+    // sets the top-left corner, containers override it to move their children
     virtual void setPosition(Vector2 position) {
         bounds.x = position.x;
         bounds.y = position.y;
@@ -28,7 +28,7 @@ protected:
 
 using ComponentPtr = std::unique_ptr<Component>;
 
-// centre un composant horizontalement sur centerX, avec son haut en y
+// centers a component horizontally on centerX, with its top at y
 inline void placeCentered(Component& component, float centerX, float y) {
     component.setPosition({centerX - component.getBounds().width / 2.0f, y});
 }

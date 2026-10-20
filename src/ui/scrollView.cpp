@@ -17,7 +17,7 @@ float ScrollView::maxOffset() const {
 }
 
 void ScrollView::layoutContent() {
-    // contenu centre horizontalement, decale vers le haut selon le defilement
+    // content centered horizontally, shifted up by the scroll offset
     float contentWidth = content->getBounds().width;
     content->setPosition({bounds.x + (bounds.width - contentWidth) / 2.0f, bounds.y + props.padding - offset});
 }
@@ -38,21 +38,21 @@ void ScrollView::update(const Input& input) {
         }
     }
 
-    // les elements caches hors de la zone visible ne doivent pas etre cliquables
+    // items hidden outside the visible area must not be clickable
     content->update(mouseInside ? input : input.withoutMouse());
 }
 
 void ScrollView::draw() const {
     DrawRectangleRec(bounds, props.background);
 
-    // on ne dessine que ce qui est dans la zone visible
+    // only draw what is inside the visible area
     BeginScissorMode((int)bounds.x, (int)bounds.y, (int)bounds.width, (int)bounds.height);
     content->draw();
     EndScissorMode();
 
     DrawRectangleLinesEx(bounds, 2.0f, props.border);
 
-    // barre de defilement, seulement si le contenu depasse
+    // scrollbar, only if the content overflows
     float max = maxOffset();
     if (max > 0.0f) {
         float thumbHeight = bounds.height * bounds.height / (bounds.height + max);

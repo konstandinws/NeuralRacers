@@ -4,13 +4,13 @@
 
 namespace ui {
 
-// racine d'un arbre de composants qui se reconstruit a partir de l'etat de l'ecran, comme le rendu React :
+// root of a component tree rebuilt from the screen's state, like React rendering:
 //
-//   root.mount([this] { return buildUI(); });   // une fois
-//   root.invalidate();                          // dans un callback, apres avoir change l'etat
+//   root.mount([this] { return buildUI(); });   // once
+//   root.invalidate();                          // in a callback, after changing the state
 //
-// la reconstruction a lieu au debut du prochain update, jamais pendant un callback :
-// un composant ne peut donc pas etre detruit pendant qu'il execute son propre onClick
+// the rebuild happens at the start of the next update, never during a callback:
+// so a component can never be destroyed while running its own onClick
 class Root {
 public:
     void mount(std::function<ComponentPtr()> render) {

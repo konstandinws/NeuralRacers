@@ -8,9 +8,9 @@ void PauseState::onEnter(App* app) {
     root = ui::column({.spacing = 90},
         ui::label({.text = "PAUSE", .fontSize = 60}),
         ui::column({.spacing = 30},
-            ui::button({.text = "REPRENDRE",      .onClick = [app] { app->popState(); }}),
-            ui::button({.text = "MENU PRINCIPAL", .onClick = [app] { app->clearAndPush(std::make_unique<MainMenuState>()); }}),
-            ui::button({.text = "QUITTER LE JEU", .onClick = [app] { app->quit(); }})
+            ui::button({.text = "RESUME",         .onClick = [app] { app->popState(); }}),
+            ui::button({.text = "MAIN MENU",      .onClick = [app] { app->clearAndPush(std::make_unique<MainMenuState>()); }}),
+            ui::button({.text = "QUIT GAME",      .onClick = [app] { app->quit(); }})
         )
     );
     ui::placeCentered(*root, app->W / 2.0f, 150);

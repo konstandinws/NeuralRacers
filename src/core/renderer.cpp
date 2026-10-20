@@ -1,7 +1,7 @@
 #include "core/renderer.hpp"
 #include "raymath.h"
 
-// utiliser des references pour etre plus moderne, mais j'ai commencé avec des pointeurs 
+// references would be more modern, but I started with pointers 
 
 void Renderer::drawCar(Car* car) {
     Rectangle renderRect = { car->pos.x, car->pos.y, (float)car->width, (float)car->height };
@@ -17,24 +17,24 @@ void Renderer::showHUD(const Car& car, float raceTime, float endRaceTime) {
     int screenHeight = GetScreenHeight();
     DrawRectangle(0, screenHeight - 80, screenWidth, 80, Fade(LIGHTGRAY, 0.7f));
 
-    // calcule l'hypothenuse
+    // computes the hypotenuse
     float speedPixels = Vector2Length(car.velocity);
 
     int displaySpeed = (int)(speedPixels * 15.0f);
 
-    const char* textVitesse = TextFormat("VITESSE : %03d KM/H", displaySpeed); 
-    const char* textTemps = TextFormat("TEMPS : %.2f s", raceTime);
-    const char* textMeilleurTemps = TextFormat("MEILLEUR : %.2f s", endRaceTime);
-    // On dessine le texte par-dessus le rectangle
-    DrawText(textVitesse, 50, screenHeight - 55, 30, GREEN);
-    DrawText(textTemps, screenWidth - 350, screenHeight - 55, 30, YELLOW);
+    const char* textSpeed = TextFormat("SPEED: %03d KM/H", displaySpeed); 
+    const char* textTime = TextFormat("TIME: %.2f s", raceTime);
+    const char* textBestTime = TextFormat("BEST: %.2f s", endRaceTime);
+    // draw the text over the rectangle
+    DrawText(textSpeed, 50, screenHeight - 55, 30, GREEN);
+    DrawText(textTime, screenWidth - 350, screenHeight - 55, 30, YELLOW);
     if(endRaceTime < std::numeric_limits<float>::max()) {
-        DrawText(textMeilleurTemps, screenWidth - 350, screenHeight - 25, 30, GOLD);
+        DrawText(textBestTime, screenWidth - 350, screenHeight - 25, 30, GOLD);
     }
 }
 
 void Renderer::showCarBindings() {
-    DrawText("Fleches: Conduire | R: Reset | ECHAP: Pause", 10, 10, 20, WHITE);
+    DrawText("Arrows: Drive | R: Reset | ESC: Pause", 10, 10, 20, WHITE);
 }
 
 void Renderer::drawTrack(Track* track) {

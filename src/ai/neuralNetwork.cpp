@@ -2,7 +2,7 @@
 #include <algorithm>
 #include "core/random.hpp"
 
-// init d'une chouche
+// layer initialization
 Layer::Layer(int numInputs, int numNeurons) {
     this->numNeurons = numNeurons;
     this->numInputsPerNeuron = numInputs;
@@ -11,9 +11,9 @@ Layer::Layer(int numInputs, int numNeurons) {
     biases.resize(numNeurons, 0.0f);
     weights.resize(numNeurons, std::vector<float>(numInputs, 0.0f));
 
-    // on met des valeurs au hasard pour les poids et les biais 
+    // random values for the weights and biases
     for (int i = 0; i < numNeurons; i++) {
-        // Un nombre au hasard entre -1 et 1
+        // random number between -1 and 1
         biases[i] = randomFloat(-1.0f, 1.0f);
 
         for (int j = 0; j < numInputs; j++) {
@@ -22,24 +22,24 @@ Layer::Layer(int numInputs, int numNeurons) {
     }
 }
 
-// feed forward d'une couche
+// feed forward for one layer
 void Layer::feedForward(const std::vector<float>& inputs) {
     for (int i = 0; i < numNeurons; i++) {
         float sum = biases[i];
         for (int j = 0; j < numInputsPerNeuron; j++) {
             sum += inputs[j] * weights[i][j];
         }
-        // Fonction d'activation tanh
+        // tanh activation function
         neurons[i] = std::tanh(sum); 
     }
 }
 
 
 NeuralNetwork::NeuralNetwork(const std::vector<int>& topology) {
-    // Si topology = {5, 8, 2}, on crée 2 couches de connexion :
-    // Couche 1 : 5 entrées -> 8 neurones (entree)
-    // Couche 2 : 8 entrées -> 2 neurones (hidden)
-    // Couche 3 : 2 neurones (sortie)
+    // if topology = {5, 8, 2}, 2 connection layers are created:
+    // layer 1: 5 inputs -> 8 neurons (input)
+    // layer 2: 8 inputs -> 2 neurons (hidden)
+    // layer 3: 2 neurons (output)
     for (size_t i = 1; i < topology.size(); i++) {
         layers.emplace_back(topology[i - 1], topology[i]);
     }
@@ -48,13 +48,13 @@ NeuralNetwork::NeuralNetwork(const std::vector<int>& topology) {
 std::vector<float> NeuralNetwork::feedForward(const std::vector<float>& inputs) {
     std::vector<float> currentInputs = inputs;
 
-    // L'information traverse les couches une par une
+    // data goes through the layers one by one
     for (Layer& layer : layers) {
         layer.feedForward(currentInputs);
-        currentInputs = layer.neurons; // La sortie devient l'entrée de la couche suivante
+        currentInputs = layer.neurons; // the output becomes the next layer's input
     }
 
-    return currentInputs; // Renvoie les 2 valeurs finales (volant et pédales)
+    return currentInputs; // returns the 2 final values (steering and pedals)
 }
 
 std::vector<int> NeuralNetwork::getTopology() const {
@@ -81,24 +81,24 @@ bool NeuralNetwork::widenInputs(int newInputCount) {
 }
 
 void NeuralNetwork::mutate(float mutationRate, float mutationStrength) {
-    // bruit gaussien : la plupart des mutations sont petites, quelques-unes plus grandes
+    // Gaussian noise: most mutations are small, a few are bigger
     std::normal_distribution<float> noise(0.0f, mutationStrength);
 
     for (Layer& layer : layers) {
         for (int i = 0; i < layer.numNeurons; i++) {
 
-            // 1. Muter le biais
+            // 1. mutate the bias
             if (randomFloat(0.0f, 1.0f) < mutationRate) {
                 layer.biases[i] += noise(rng());
 
-                layer.biases[i] = std::clamp(layer.biases[i], -2.0f, 2.0f); // clamp les biais pour eviter les valeurs extrêmes
+                layer.biases[i] = std::clamp(layer.biases[i], -2.0f, 2.0f); // clamp the biases to avoid extreme values
             }
 
-            // 2. Muter les poids
+            // 2. mutate the weights
             for (int j = 0; j < layer.numInputsPerNeuron; j++) {
                 if (randomFloat(0.0f, 1.0f) < mutationRate) {
                     layer.weights[i][j] += noise(rng());
-                    layer.weights[i][j] = std::clamp(layer.weights[i][j], -2.0f, 2.0f); // clamp les poids pour eviter les valeurs extrêmes entre -2 et 2
+                    layer.weights[i][j] = std::clamp(layer.weights[i][j], -2.0f, 2.0f); // clamp the weights between -2 and 2 to avoid extreme values
                 }
             }
         }
@@ -108,8 +108,8 @@ void NeuralNetwork::mutate(float mutationRate, float mutationStrength) {
 NeuralNetwork NeuralNetwork::crossover(const NeuralNetwork& parentA, const NeuralNetwork& parentB) {
     NeuralNetwork child = parentA;
 
-    // on echange des neurones entiers plutot que des poids isoles :
-    // les poids d'un meme neurone fonctionnent ensemble, les melanger casse ce qu'il a appris
+    // swap whole neurons rather than single weights:
+    // the weights of one neuron work together, mixing them breaks what it learned
     for (size_t l = 0; l < child.layers.size(); l++) {
         Layer& layer = child.layers[l];
         const Layer& other = parentB.layers[l];

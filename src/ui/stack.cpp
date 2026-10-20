@@ -5,8 +5,8 @@ namespace ui {
 
 Stack::Stack(Direction direction, StackProps props, std::vector<ComponentPtr> children)
     : direction(direction), props(props), children(std::move(children)) {
-    // la taille du conteneur depend de celle de ses enfants :
-    // somme sur l'axe principal, maximum sur l'autre axe
+    // the container's size depends on its children:
+    // sum along the main axis, maximum along the other axis
     bool vertical = direction == Direction::Vertical;
     for (const ComponentPtr& child : this->children) {
         Rectangle childBounds = child->getBounds();

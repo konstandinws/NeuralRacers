@@ -11,18 +11,18 @@ struct StepperProps {
     int value = 0;
     int min = 0;
     int max = 100;
-    // un bouton - et un bouton + par pas, du plus grand au plus petit : {10, 1} -> [-10] [-1] valeur [+1] [+10]
+    // one - button and one + button per step, largest to smallest: {10, 1} -> [-10] [-1] value [+1] [+10]
     std::vector<int> steps = {1};
     std::function<void(int)> onChange;
 };
 
-// choix d'un nombre entier avec des boutons, ou en tapant la valeur dans le champ du milieu
-// la valeur tapee est validee avec Entree ou en cliquant ailleurs, puis ramenee entre min et max
+// picks an integer with buttons, or by typing the value in the middle field
+// the typed value is committed with Enter or by clicking elsewhere, then clamped between min and max
 class Stepper : public Component {
 public:
     explicit Stepper(StepperProps props);
 
-    // les boutons et le champ capturent this : le stepper ne doit pas etre copie ou deplace
+    // the buttons and the field capture this: the stepper must not be copied or moved
     Stepper(const Stepper&) = delete;
     Stepper& operator=(const Stepper&) = delete;
 

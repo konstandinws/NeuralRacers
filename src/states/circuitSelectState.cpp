@@ -38,7 +38,7 @@ ui::ComponentPtr CircuitSelectState::buildUI(App* app)
     };
     float buttonWidth = listProps.size.x - 2 * listProps.padding - 2 * ui::ScrollView::SCROLLBAR_WIDTH;
 
-    // un bouton par circuit trouve dans le dossier
+    // one button per track found in the folder
     std::vector<ui::ComponentPtr> trackButtons;
     for (const std::string& file : trackFiles) {
         trackButtons.push_back(ui::button({
@@ -52,7 +52,7 @@ ui::ComponentPtr CircuitSelectState::buildUI(App* app)
         ui::label({.text = "SELECT YOUR CIRCUIT", .fontSize = 40}),
         ui::scrollView(listProps, ui::columnOf({.spacing = 10}, std::move(trackButtons))),
         ui::label({.text = loadError, .fontSize = 18, .color = ui::theme::accent}),
-        ui::button({.text = "RETOUR", .onClick = [app] { app->changeState(std::make_unique<MainMenuState>()); }})
+        ui::button({.text = "BACK", .onClick = [app] { app->changeState(std::make_unique<MainMenuState>()); }})
     );
     ui::placeCentered(*tree, app->W / 2.0f, 40);
     return tree;

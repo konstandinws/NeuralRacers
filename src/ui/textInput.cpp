@@ -11,7 +11,7 @@ TextInput::TextInput(TextInputProps props) : props(std::move(props)) {
 }
 
 void TextInput::update(const Input& input) {
-    // un clic donne ou retire le focus selon qu'il est sur le champ ou non
+    // a click gives or removes focus depending on whether it is on the field
     if (input.mousePressed) {
         bool wasFocused = focused;
         focused = CheckCollisionPointRec(input.mouse, bounds);
@@ -58,13 +58,13 @@ void TextInput::draw() const {
     int textY = (int)(bounds.y + (bounds.height - props.fontSize) / 2.0f);
 
     if (text.empty()) {
-        // decale pour ne pas etre cache par le curseur
+        // offset so it is not hidden by the cursor
         DrawText(props.placeholder.c_str(), textX + 6, textY, props.fontSize, theme::border);
     } else {
         DrawText(text.c_str(), textX, textY, props.fontSize, theme::text);
     }
 
-    // curseur qui clignote apres le texte, seulement sur le champ actif
+    // blinking cursor after the text, only on the focused field
     if (focused && std::fmod(GetTime(), 1.0) < 0.5) {
         DrawRectangle(textX + textWidth + 2, textY, 2, props.fontSize, theme::text);
     }

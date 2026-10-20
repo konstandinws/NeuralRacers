@@ -1,7 +1,7 @@
 #include "game/track.hpp"
 
 bool Track::checkWallCollision(const Car& car) const {
-    Vector2 collisionPoint = {0, 0}; // variable temporaire pour stocker le point de collision, pas utilisée dans la logique actuelle
+    Vector2 collisionPoint = {0, 0}; // temporary variable for the collision point, unused by the current logic
     for(Line l : lines){
         for(Line carLine : car.carLines){
             if(CheckCollisionLines(Vector2{carLine.a.x, carLine.a.y}, Vector2{carLine.b.x, carLine.b.y}, Vector2{l.a.x, l.a.y}, Vector2{l.b.x, l.b.y}, &collisionPoint)){

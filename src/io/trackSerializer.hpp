@@ -4,15 +4,15 @@
 #include <string>
 #include "game/track.hpp"
 
-// dossier des circuits, relatif au dossier depuis lequel le jeu est lance (racine du projet)
+// tracks folder, relative to the folder the game is launched from (project root)
 inline const std::string TRACKS_DIR = "assets/tracks/";
 
-// enregistre dans TRACKS_DIR/<name>.txt, renvoie false si le fichier n'a pas pu etre ecrit
+// saves to TRACKS_DIR/<name>.txt, returns false if the file could not be written
 bool saveTrack(const Track& track, const std::string& name);
 
 bool trackExists(const std::string& name);
 
-// premier nom libre de la forme nouveau_circuit_X, X = plus grand numero existant + 1
+// first free name of the form new_track_X, X = highest existing number + 1
 std::string nextDefaultTrackName();
 
 // Reads a track file. Returns nullopt when the file is missing or malformed;

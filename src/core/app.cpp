@@ -5,7 +5,7 @@
 
 App::App() : running(true) {
     InitWindow(W, H, "Neuro-Trackmania");
-    SetExitKey(0); // eviter que le jeu se ferme avec la touche ESC
+    SetExitKey(0); // keep ESC from closing the game
     SetTargetFPS(60);
 
     doPush(std::make_unique<MainMenuState>());
@@ -88,7 +88,7 @@ void App::run() {
         }
         EndDrawing();
 
-        // tous les etats ont fini de s'executer pour cette frame, on peut modifier la pile sans risque
+        // every state has finished running for this frame, the stack can be changed safely
         applyPendingActions();
     }
 }

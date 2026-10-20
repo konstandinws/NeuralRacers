@@ -6,9 +6,9 @@ struct Layer {
     int numNeurons;
     int numInputsPerNeuron;
     
-    std::vector<float> neurons;                     // La valeur de chaque neurone
-    std::vector<float> biases;                      // Le biais de chaque neurone
-    std::vector<std::vector<float>> weights;        // Les poids des connexions 
+    std::vector<float> neurons;                     // value of each neuron
+    std::vector<float> biases;                      // bias of each neuron
+    std::vector<std::vector<float>> weights;        // connection weights
 
     Layer(int numInputs, int numNeurons);
     void feedForward(const std::vector<float>& inputs);
@@ -22,18 +22,18 @@ public:
 
     std::vector<float> feedForward(const std::vector<float>& inputs);
 
-    // nombre de neurones par couche, entree comprise (ex : {10, 8, 2})
+    // neurons per layer, input included (e.g. {10, 8, 2})
     std::vector<int> getTopology() const;
 
-    // ajoute des entrees avec des poids a 0 : le reseau donne exactement les memes sorties qu'avant,
-    // et l'entrainement peut ensuite apprendre a utiliser les nouvelles entrees
-    // renvoie false si newInputCount est plus petit que le nombre actuel d'entrees
+    // adds inputs with zero weights: the network gives exactly the same outputs as before,
+    // and training can then learn to use the new inputs
+    // returns false if newInputCount is smaller than the current input count
     bool widenInputs(int newInputCount);
     
-    // mutationRate : probabilite de muter chaque poids/biais
-    // mutationStrength : ecart-type du bruit gaussien ajoute
+    // mutationRate: probability of mutating each weight/bias
+    // mutationStrength: standard deviation of the added Gaussian noise
     void mutate(float mutationRate, float mutationStrength);
 
-    // enfant de deux parents de meme topologie : chaque neurone (biais + poids entrants) vient de l'un ou l'autre
+    // child of two parents with the same topology: each neuron (bias + incoming weights) comes from one or the other
     static NeuralNetwork crossover(const NeuralNetwork& parentA, const NeuralNetwork& parentB);
 };

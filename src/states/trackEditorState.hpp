@@ -9,7 +9,7 @@ class TrackEditorState : public State
 {
 public:
     TrackEditorState();
-    // pendant le popup, Echap le ferme au lieu d'ouvrir la pause
+    // while the popup is open, Esc closes it instead of opening the pause menu
     bool isPausable() const override { return !savePopupOpen; }
     void onEnter(App* app) override;
     void update(App* app) override;
@@ -18,7 +18,7 @@ public:
 private:
     void updateEditor(bool mouseAllowed);
 
-    // sauvegarde : G ou bouton ENREGISTRER -> popup avec le nom -> VALIDER
+    // saving: G or the SAVE button -> popup with the name -> CONFIRM
     void requestSave();
     void openSavePopup();
     void closeSavePopup();
@@ -32,13 +32,13 @@ private:
     ui::ComponentPtr toolbar;
     ui::ComponentPtr savePopup;
     bool savePopupOpen = false;
-    // les callbacks du popup ne peuvent pas le detruire pendant qu'il s'execute :
-    // ils levent ce drapeau et le popup est reconstruit au debut de la frame suivante (comme un re-render React)
+    // the popup's callbacks cannot destroy it while it is running:
+    // they set this flag and the popup is rebuilt at the start of the next frame (like a React re-render)
     bool savePopupDirty = false;
     std::string trackName;
     std::string saveError;
 
-    // message temporaire en bas de l'ecran
+    // temporary message at the bottom of the screen
     std::string message;
     Color messageColor = WHITE;
     float messageTimer = 0.0f;

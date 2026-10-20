@@ -10,23 +10,23 @@
 TrackEditorState::TrackEditorState() {
     camera = {};
     camera.zoom = 1.0f;
-    camera.offset = { 0, 0 }; // L'origine de la caméra
-    camera.target = { 0, 0 }; // La cible de la caméra
+    camera.offset = { 0, 0 }; // camera origin
+    camera.target = { 0, 0 }; // camera target
 }
 
 void TrackEditorState::onEnter(App* app) {
-    toolbar = ui::button({.text = "ENREGISTRER", .onClick = [this] { requestSave(); }, .size = {200, 40}});
+    toolbar = ui::button({.text = "SAVE", .onClick = [this] { requestSave(); }, .size = {200, 40}});
     toolbar->setPosition({app->W - 210.0f, 10});
 }
 
 void TrackEditorState::update(App* app) {
     (void)app;
 
-    // lu a chaque frame meme sans popup, pour vider la file des caracteres tapes
-    // (sinon les touches WASD tapees avant apparaitraient dans le champ du nom)
+    // read every frame even without the popup, to drain the typed character queue
+    // (otherwise WASD keys typed earlier would show up in the name field)
     ui::Input input = ui::Input::poll();
 
-    // changements demandes par les callbacks a la frame precedente
+    // changes requested by callbacks during the previous frame
     if (!savePopupOpen) {
         savePopup.reset();
     } else if (savePopupDirty) {
@@ -38,7 +38,7 @@ void TrackEditorState::update(App* app) {
         messageTimer -= GetFrameTime();
     }
 
-    // pendant le popup, l'editeur ne recoit aucune entree (les touches tapees servent au nom)
+    // while the popup is open, the editor gets no input (typed keys go to the name)
     if (savePopupOpen) {
         if (IsKeyPressed(KEY_ESCAPE)) {
             closeSavePopup();
@@ -55,30 +55,30 @@ void TrackEditorState::update(App* app) {
         return;
     }
 
-    // un clic sur la barre d'outils ne doit pas placer de point dans le circuit
+    // a click on the toolbar must not place a point on the track
     bool mouseOnToolbar = CheckCollisionPointRec(input.mouse, toolbar->getBounds());
     updateEditor(!mouseOnToolbar);
 }
 
 void TrackEditorState::updateEditor(bool mouseAllowed) {
     if(IsKeyDown(KEY_W)) {
-        camera.target.y -= 20; // Déplacer la caméra vers le haut
+        camera.target.y -= 20; // move the camera up
     }
     if(IsKeyDown(KEY_S)) {
-        camera.target.y += 20; // Déplacer la caméra vers le bas
+        camera.target.y += 20; // move the camera down
     }
     if(IsKeyDown(KEY_A)) {
-        camera.target.x -= 20; // Déplacer la caméra vers la gauche
+        camera.target.x -= 20; // move the camera left
     }
     if(IsKeyDown(KEY_D)) {
-        camera.target.x += 20; // Déplacer la caméra vers la droite
+        camera.target.x += 20; // move the camera right
     }
 
     if (IsKeyPressed(KEY_Q)) {
-        camera.zoom *= 1.1f; // Zoomer
+        camera.zoom *= 1.1f; // zoom in
     }
     if (IsKeyPressed(KEY_E)) {
-        camera.zoom /= 1.1f; // Dézoomer
+        camera.zoom /= 1.1f; // zoom out
     }
 
     if(IsKeyPressed(KEY_SPACE)) {
@@ -105,13 +105,13 @@ void TrackEditorState::updateEditor(bool mouseAllowed) {
         }
     }
 
-    // apres le placement ci-dessus : le clic qui ferme le trace ne doit pas aussi placer le depart
+    // after the placement above: the click that closes the outline must not also place the start
     editor.handleClick(camera);
 }
 
 void TrackEditorState::requestSave() {
     if (!editor.isFinished()) {
-        showMessage("Circuit incomplet : ferme le trace, puis place le depart, la direction et l'arrivee", ORANGE);
+        showMessage("Incomplete track: close the outline, then place the start, direction and finish line", ORANGE);
         return;
     }
     openSavePopup();
@@ -125,7 +125,7 @@ void TrackEditorState::openSavePopup() {
 }
 
 void TrackEditorState::closeSavePopup() {
-    // le popup est detruit au debut de la frame suivante, pas pendant son propre callback
+    // the popup is destroyed at the start of the next frame, not during its own callback
     savePopupOpen = false;
 }
 
@@ -134,19 +134,19 @@ void TrackEditorState::confirmSave() {
     std::string name = useDefaultName ? nextDefaultTrackName() : trackName;
 
     if (!useDefaultName && trackExists(name)) {
-        saveError = "Un circuit \"" + name + "\" existe deja";
+        saveError = "A track named \"" + name + "\" already exists";
         savePopupDirty = true;
         return;
     }
 
     if (!saveTrack(editor.saveTrack(), name)) {
-        saveError = "Impossible d'ecrire le fichier";
+        saveError = "Could not write the file";
         savePopupDirty = true;
         return;
     }
 
     closeSavePopup();
-    showMessage("Circuit enregistre : " + name + ".txt", GREEN);
+    showMessage("Track saved: " + name + ".txt", GREEN);
 }
 
 void TrackEditorState::buildSavePopup() {
@@ -154,7 +154,7 @@ void TrackEditorState::buildSavePopup() {
     bool hasError = !saveError.empty();
 
     savePopup = ui::modal({}, ui::column({.spacing = 20},
-        ui::label({.text = "Enregistrer le circuit", .fontSize = 30}),
+        ui::label({.text = "Save track", .fontSize = 30}),
         ui::textInput({
             .value = trackName,
             .placeholder = defaultName,
@@ -164,13 +164,13 @@ void TrackEditorState::buildSavePopup() {
             .autoFocus = true,
         }),
         ui::label({
-            .text = hasError ? saveError : "Laisser vide pour : " + defaultName,
+            .text = hasError ? saveError : "Leave empty for: " + defaultName,
             .fontSize = 18,
             .color = hasError ? ui::theme::accent : ui::theme::border,
         }),
         ui::row({.spacing = 20},
-            ui::button({.text = "ANNULER", .onClick = [this] { closeSavePopup(); }, .size = {170, 50}}),
-            ui::button({.text = "VALIDER", .onClick = [this] { confirmSave(); }, .size = {170, 50}})
+            ui::button({.text = "CANCEL", .onClick = [this] { closeSavePopup(); }, .size = {170, 50}}),
+            ui::button({.text = "CONFIRM", .onClick = [this] { confirmSave(); }, .size = {170, 50}})
         )
     ));
 }
@@ -188,7 +188,7 @@ void TrackEditorState::render(App* app) {
     }
     BeginMode2D(camera);
 
-    // mettre cela dans le renderer (flemme pour l'instant)
+    // should move to the renderer (later)
     editor.draw();
     if(!editor.angleStart && editor.start) {
         DrawLine(editor.start->x, editor.start->y, GetScreenToWorld2D(GetMousePosition(), camera).x, GetScreenToWorld2D(GetMousePosition(), camera).y, BLUE);

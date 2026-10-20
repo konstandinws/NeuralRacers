@@ -7,7 +7,7 @@ AICar::AICar(float x, float y, float angle) : Car(x, y, angle), nn(AI_TOPOLOGY) 
 }
 
 void AICar::initializeSensors(float fov, int numRays, float maxDistance) {
-    // evite de mettre le nombre de rayons a 1 pour eviter la division par zero
+    // do not set the ray count to 1, it would divide by zero
     float angleStep = fov / (numRays - 1);
     float startAngle = -fov / 2.0f;
 
@@ -29,11 +29,11 @@ void AICar::updateSensors(const Track& track) {
         Vector2 sensorDir = { cosf(sensorAngle * DEG2RAD), sinf(sensorAngle * DEG2RAD) };
         Vector2 sensorEnd = { pos.x + sensorDir.x * sensor.maxDistance, pos.y + sensorDir.y * sensor.maxDistance };
 
-        // collision avec les murs
+        // collision with the walls
         float closestDist = sensor.maxDistance;
         Vector2 closestPoint = { sensorEnd.x, sensorEnd.y };
 
-        // pour optimiser il faudrait ajouter une grille
+        // a spatial grid would make this faster
         for (const Line& line : track.lines) {
             Vector2 intersection;
             if (CheckCollisionLines(pos, sensorEnd, Vector2{line.a.x, line.a.y}, Vector2{line.b.x, line.b.y}, &intersection)) {
@@ -45,7 +45,7 @@ void AICar::updateSensors(const Track& track) {
             }
         }
 
-        sensor.readValue = closestDist / sensor.maxDistance; // Normalise a [0, 1]
+        sensor.readValue = closestDist / sensor.maxDistance; // normalized to [0, 1]
         sensor.endPoint = closestPoint;
     }
 }
@@ -53,16 +53,16 @@ void AICar::updateSensors(const Track& track) {
 std::vector<float> AICar::computeInputs() const {
     std::vector<float> inputs;
     for (const Sensor& s : sensors) {
-        inputs.push_back(s.readValue); // On envoie les valeurs (0.0 à 1.0)
+        inputs.push_back(s.readValue); // send the values (0.0 to 1.0)
     }
 
-    // vitesse dans le repere de la voiture, pour qu'elle sache quand freiner et si elle derape
-    // vitesse max atteinte pedale a fond : v = (v + a) * (1 - friction)  =>  v = a * (1 - friction) / friction
+    // velocity in the car's frame, so it knows when to brake and whether it is sliding
+    // top speed with the pedal floored: v = (v + a) * (1 - friction)  =>  v = a * (1 - friction) / friction
     float maxSpeed = MAX_ACCELERATION * (1.0f - friction) / friction;
-    Vector2 forward = { sinf(rad), -cosf(rad) };  // meme direction que Car::accelerate
+    Vector2 forward = { sinf(rad), -cosf(rad) };  // same direction as Car::accelerate
     Vector2 right = { cosf(rad), sinf(rad) };
-    inputs.push_back(Clamp(Vector2DotProduct(velocity, forward) / maxSpeed, -1.0f, 1.0f)); // negative en marche arriere
-    inputs.push_back(Clamp(Vector2DotProduct(velocity, right) / maxSpeed, -1.0f, 1.0f));   // derapage gauche / droite
+    inputs.push_back(Clamp(Vector2DotProduct(velocity, forward) / maxSpeed, -1.0f, 1.0f)); // negative when reversing
+    inputs.push_back(Clamp(Vector2DotProduct(velocity, right) / maxSpeed, -1.0f, 1.0f));   // sliding left / right
 
     return inputs;
 }
@@ -75,7 +75,7 @@ void AICar::updateAI(const Track& track) {
 
     std::vector<float> outputs = nn.feedForward(computeInputs());
 
-    //outputs sont normalisés entre -1 et 1 grâce à la fonction d'activation tanh
+    // outputs are between -1 and 1 thanks to the tanh activation
 
     float turnAmount = outputs[0] * MAX_TURN;
     float accAmount = outputs[1] * MAX_ACCELERATION;
@@ -87,11 +87,11 @@ void AICar::updateAI(const Track& track) {
 
     updateProgress(track);
 
-    // le score est recalcule a chaque frame a partir de la progression, il ne s'accumule pas
+    // the score is recomputed every frame from the progress, it does not accumulate
     score = progress * GATE_SCORE - aliveTimer * TIME_PENALTY;
 
     if (hasFinished) {
-        isDead = true; // On considère que la voiture a terminé sa course
+        isDead = true; // the car has finished its race
         return;
     }
 
@@ -108,15 +108,15 @@ void AICar::updateAI(const Track& track) {
 
     if (aliveTimer > GRACE_PERIOD) {
         if (Vector2Length(velocity) < MIN_SPEED) {
-            lowSpeedTimer += GetFrameTime(); // Le chronomètre tourne
+            lowSpeedTimer += GetFrameTime(); // the timer is running
         } else {
-            lowSpeedTimer = 0.0f;       // Elle a réaccéléré, on pardonne et on remet à zéro.
+            lowSpeedTimer = 0.0f;       // it sped up again, reset the timer
         }
 
-        // Sentence irrévocable
+        // final verdict
         if (lowSpeedTimer > MAX_SLOW_TIME) {
             isDead = true;
-            score -= 20.0f; // On pénalise les conducteurs lents
+            score -= 20.0f; // penalize slow drivers
         }
     }
 }
@@ -124,7 +124,7 @@ void AICar::updateAI(const Track& track) {
 void AICar::updateProgress(const Track& track) {
     int gateCount = track.getGateCount();
 
-    // on ne regarde que la prochaine porte : impossible de valider un checkpoint dans le desordre
+    // only the next gate is checked: checkpoints cannot be passed out of order
     if (track.checkLineCrossed(*this, track.getGate(nextGate))) {
         nextGate++;
         if (nextGate == gateCount) {
@@ -134,7 +134,7 @@ void AICar::updateProgress(const Track& track) {
         }
     }
 
-    // avancement entre la porte precedente (ou le depart) et la prochaine
+    // progress between the previous gate (or the start) and the next one
     Vector2 previous = (nextGate == 0) ? Vector2{track.start.x, track.start.y} : track.getGateCenter(nextGate - 1);
     Vector2 target = track.getGateCenter(nextGate);
 

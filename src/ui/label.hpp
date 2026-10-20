@@ -11,7 +11,7 @@ struct LabelProps {
     Color color = theme::text;
 };
 
-// texte simple, sa taille est calculee a partir du texte
+// plain text, its size is computed from the text
 class Label : public Component {
 public:
     explicit Label(LabelProps props);

@@ -9,8 +9,8 @@ public:
 
     virtual ~State() = default;
 
-    // appele quand l'etat est ajoute a la pile (comme componentDidMount en React) :
-    // c'est la qu'on construit l'interface, car les callbacks ont besoin de app
+    // called when the state is pushed on the stack (like componentDidMount in React):
+    // this is where the UI is built, because the callbacks need app
     virtual void onEnter(App* app) { (void)app; }
 
     virtual void update(App* app) = 0;

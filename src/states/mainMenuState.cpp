@@ -8,14 +8,14 @@
 
 void MainMenuState::onEnter(App* app)
 {
-    // Si on clique, on dit App de changer d'état
+    // on click, ask App to change state
     root = ui::column({.spacing = 160},
         ui::label({.text = "Trackmania", .fontSize = 40}),
         ui::column({.spacing = 50},
-            ui::button({.text = "JOUER",     .onClick = [app] { app->changeState(std::make_unique<CircuitSelectState>()); }}),
-            ui::button({.text = "EDITEUR",   .onClick = [app] { app->changeState(std::make_unique<TrackEditorState>()); }}),
-            ui::button({.text = "ENTRAINER", .onClick = [app] { app->changeState(std::make_unique<TrainConfigState>()); }}),
-            ui::button({.text = "QUITTER",   .onClick = [app] { app->quit(); }})
+            ui::button({.text = "PLAY",      .onClick = [app] { app->changeState(std::make_unique<CircuitSelectState>()); }}),
+            ui::button({.text = "EDITOR",    .onClick = [app] { app->changeState(std::make_unique<TrackEditorState>()); }}),
+            ui::button({.text = "TRAIN",     .onClick = [app] { app->changeState(std::make_unique<TrainConfigState>()); }}),
+            ui::button({.text = "QUIT",      .onClick = [app] { app->quit(); }})
         )
     );
     ui::placeCentered(*root, app->W / 2.0f, 100);

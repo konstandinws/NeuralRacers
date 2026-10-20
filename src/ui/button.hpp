@@ -21,13 +21,13 @@ struct ButtonProps {
     std::string text;
     std::function<void()> onClick;
     Vector2 size = {200, 50};
-    bool selected = false;   // mis en evidence (ex : element choisi dans une liste)
-    bool disabled = false;   // grise et non cliquable
+    bool selected = false;   // highlighted (e.g. item chosen in a list)
+    bool disabled = false;   // grayed out and not clickable
     ButtonStyle style = {};
 };
 
-// bouton cliquable : onClick est appele quand on relache le clic sur le bouton
-// (comme un vrai bouton : on peut annuler en sortant du bouton avant de relacher)
+// clickable button: onClick is called when the click is released on the button
+// (like a real button: you can cancel by leaving the button before releasing)
 class Button : public Component {
 public:
     explicit Button(ButtonProps props);
@@ -38,7 +38,7 @@ public:
 private:
     ButtonProps props;
     bool hovered = false;
-    bool held = false;   // le clic a commence sur ce bouton
+    bool held = false;   // the click started on this button
 };
 
 }

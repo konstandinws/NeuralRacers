@@ -6,13 +6,13 @@ namespace ui {
 
 struct ModalProps {
     float padding = 30.0f;
-    Color overlay = {0, 0, 0, 170};  // voile sur le reste de l'ecran
+    Color overlay = {0, 0, 0, 170};  // overlay on the rest of the screen
     Color background = theme::surface;
     Color border = theme::border;
 };
 
-// popup centre a l'ecran : assombrit tout le reste et affiche son contenu dans un panneau
-// il couvre tout l'ecran, donc rien en dessous ne recoit de clics tant qu'il est ouvert
+// popup centered on screen: darkens everything else and shows its content in a panel
+// it covers the whole screen, so nothing below receives clicks while it is open
 class Modal : public Component {
 public:
     Modal(ModalProps props, ComponentPtr content);
