@@ -9,3 +9,4 @@ config.mk
 test
 test.cpptxt
 Analyse.md
+.vscode/
